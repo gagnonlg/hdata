@@ -31,7 +31,8 @@ usage Help = "usage: " ++ progName ++ " [operation] [id]\n\
 usage op = show op ++ " not yet implemented" 
 
 parseArgs :: [String] -> Either String Operation
-parseArgs xs = if null xs then Right Help else parseArg $ head xs
+parseArgs [] = Left $ "No operation specified ('" ++ progName ++ " help' for help)" 
+parseArgs xs = parseArg $ head xs
 
 parseArg :: String -> Either String Operation
 parseArg op = case op of  
