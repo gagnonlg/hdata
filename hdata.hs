@@ -79,17 +79,16 @@ main :: IO ()
 main = do 
     argv <- getArgs
     case parseArgs argv of
-        Left msg -> error msg
-        Right op -> case op of 
-            Add      -> add argv
-            Bookmark -> bookmark argv
-            Citation -> citation argv
-            Help     -> help argv
-            Modify   -> modify argv
-            Remove   -> remove argv
-            Search   -> search argv
-            View     -> view argv
-            Version  -> version
+        Right Add      -> add argv
+        Right Bookmark -> bookmark argv
+        Right Citation -> citation argv
+        Right Help     -> help argv
+        Right Modify   -> modify argv
+        Right Remove   -> remove argv
+        Right Search   -> search argv
+        Right View     -> view argv
+        Right Version  -> version
+        Left msg       -> error msg
 
     
 
