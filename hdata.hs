@@ -30,23 +30,23 @@ usage Help = "usage: " ++ progName ++ " [operation] [id]\n\
 
 usage op = show op ++ " not yet implemented" 
 
-parseArgs :: [String] -> Maybe Operation
-parseArgs xs = if null xs then Just Help else parseArg $ head xs
+parseArgs :: [String] -> Either String Operation
+parseArgs xs = if null xs then Right Help else parseArg $ head xs
 
-parseArg :: String -> Maybe Operation 
+parseArg :: String -> Either String Operation
 parseArg op = case op of  
-    "add"      -> Just Add
-    "bookmark" -> Just Bookmark
-    "citation" -> Just Citation
-    "help"     -> Just Help
-    "-h"       -> Just Help
-    "--help"   -> Just Help
-    "modify"   -> Just Modify
-    "remove"   -> Just Remove
-    "search"   -> Just Search
-    "view"     -> Just View
-    "version"  -> Just Version
-    _          -> Nothing
+    "add"      -> Right Add
+    "bookmark" -> Right Bookmark
+    "citation" -> Right Citation
+    "help"     -> Right Help
+    "-h"       -> Right Help
+    "--help"   -> Right Help
+    "modify"   -> Right Modify
+    "remove"   -> Right Remove
+    "search"   -> Right Search
+    "view"     -> Right View
+    "version"  -> Right Version
+    _          -> Left $ "Invalid argument: " ++ op 
 
 add :: [String] -> IO ()
 add argv = putStrLn $ usage Add
@@ -79,8 +79,8 @@ main :: IO ()
 main = do 
     argv <- getArgs
     case parseArgs argv of
-        Nothing -> error $ "Invalid argument: " ++  (show $ head argv)
-        Just op -> case op of 
+        Left msg -> error msg
+        Right op -> case op of 
             Add      -> add argv
             Bookmark -> bookmark argv
             Citation -> citation argv
