@@ -29,7 +29,7 @@ add argv = if isHelp $ head argv
     else do 
         case parseFlags argv of
             Left  msg   -> error $ "add: " ++ msg
-            Right flags -> putStrLn (flagsToString flags) >> putStrLn (buildSQL flags)
+            Right flags -> do putStrLn (flagsToString flags) >> runSQL (buildSQL flags)
 
 buildSQL :: [Flag] -> String
 buildSQL flags = buildSQL' ("INSERT INTO " ++ tableName ++ " (") "VALUES(" flags
@@ -69,7 +69,7 @@ getFlag x@(x0:x1:_) =
            else Right flag 
 
 getValues :: [String] -> String
-getValues argv = intercalate "|" $ takeWhile (not . isFlag) argv 
+getValues argv = intercalate "/" $ takeWhile (not . isFlag) argv 
 
 opendb :: IO Connection
 opendb = do
@@ -86,6 +86,14 @@ opendb = do
                                               \ Pages    VARCHAR(1000));") []
     commit conn
     return conn
+
+runSQL :: String -> IO ()
+runSQL sql = do
+    db <- opendb
+    run db sql []
+    commit db
+    disconnect db
+    return ()
 
 usageAdd :: String
 usageAdd = "usage: " ++ progName ++ " add <filters>\n\
