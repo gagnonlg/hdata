@@ -3,7 +3,4 @@
 hdata
 *.swp
 *.db
-==> Add.hs:
-* check that a given date is valid
-* check that pages are valid
-* check that a given path points to an existing file
+TODO
