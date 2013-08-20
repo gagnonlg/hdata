@@ -26,7 +26,11 @@ add argv = if isHelp $ head argv
     else do 
         case parseFlags argv of
             Left  msg   -> error $ "add: " ++ msg
-            Right flags -> error "args were parsed OK, but the rest of the module is not done"
+            Right flags -> putStr $ flagsToString flags
+
+flagsToString :: [Flag] -> String
+flagsToString xs = foldl' step [] xs
+    where step ys x = show x ++ "\n" ++ ys
 
 parseFlags :: [String] -> Either String [Flag]
 parseFlags argv = parseFlags' [] argv
@@ -54,7 +58,7 @@ getFlag x@(x0:x1:_) =
            else Right flag 
 
 getValues :: [String] -> String
-getValues argv = intercalate "/" $ takeWhile (not . isFlag) argv 
+getValues argv = intercalate "|" $ takeWhile (not . isFlag) argv 
 
 usageAdd :: String
 usageAdd = "usage: " ++ progName ++ " add <filters>\n\
