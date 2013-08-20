@@ -28,7 +28,14 @@ add argv = if isHelp $ head argv
     else do 
         case parseFlags argv of
             Left  msg   -> error $ "add: " ++ msg
-            Right flags -> putStr $ flagsToString flags
+            Right flags -> putStrLn (flagsToString flags) >> putStrLn (buildSQL flags)
+
+buildSQL :: [Flag] -> String
+buildSQL flags = buildSQL' ("INSERT INTO " ++ tableName ++ " (") "VALUES(" flags
+    where buildSQL' t1 t2 [] = ((init t1) ++ ") ") ++ (init(t2) ++ ");")
+          buildSQL' t1 t2 (f:fs) = buildSQL' (t1++key++",") (t2++"'"++value++"',") fs
+              where (key,val) = break (==' ') $ show f
+                    value     = filter (/= '\"') (tail val)
 
 flagsToString :: [Flag] -> String
 flagsToString xs = foldl' step [] xs
