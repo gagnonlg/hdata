@@ -2,15 +2,19 @@ module Util (
     Operation (..),
     isHelp,
     parseArg,
+    dbName,
     progName,
     progVersion,
+    tableName,
     usage
 ) where
 
 import System.Environment
 
+dbName = progName ++ ".db"
 progName = "hdata"
 progVersion = "0.0"
+tableName = progName ++ "Table"
 
 data Operation = Add
                | Bookmark

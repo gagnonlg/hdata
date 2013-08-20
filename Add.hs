@@ -4,6 +4,8 @@ module Add (
 ) where
 
 import Data.List
+import Database.HDBC
+import Database.HDBC.Sqlite3
 import Util
 
 data Flag = Path String
@@ -59,6 +61,22 @@ getFlag x@(x0:x1:_) =
 
 getValues :: [String] -> String
 getValues argv = intercalate "|" $ takeWhile (not . isFlag) argv 
+
+opendb :: IO Connection
+opendb = do
+    conn <- connectSqlite3 dbName
+    run conn  ("CREATE TABLE " ++ tableName ++ "(id       INTEGER PRIMARY KEY,\
+                                              \ path     VARCHAR(1000),\
+                                              \ title    VARCHAR(1000),\
+                                              \ authors  VARCHAR(1000),\
+                                              \ keywords VARCHAR(1000),\
+                                              \ journal  VARCHAR(1000),\
+                                              \ volume   VARCHAR(1000),\
+                                              \ issue    VARCHAR(1000),\
+                                              \ date     VARCHAR(1000),\
+                                              \ pages    VARCHAR(1000));") []
+    commit conn
+    return conn
 
 usageAdd :: String
 usageAdd = "usage: " ++ progName ++ " add <filters>\n\
