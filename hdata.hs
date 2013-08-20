@@ -11,7 +11,7 @@ import Util
 import View
 
 help :: [String] -> IO ()
-help argv = putStrLn $ usage Help
+help argv = putStrLn $ usageHelp
 
 usageHelp = "usage: " ++ progName ++ " [operation] [id]\n\
              \operations:\n\
