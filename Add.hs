@@ -13,13 +13,14 @@ data Flag = Path String
           | Authors String
           | Keywords String
           | Journal String
+          | Volume String
           | Issue String
           | Date String
           | Pages String
           deriving (Show)
 
 isFlag :: String -> Bool
-isFlag f = f `elem` ["-f","-p","-t","-j","-i","-d","-a","-k"]
+isFlag f = f `elem` ["-f","-p","-t","-j","-i","-d","-v","-a","-k"]
 
 add :: [String] -> IO ()
 add [] = error $ "add: no arguments specified ('" ++ progName ++ " add help' for help)"
@@ -57,6 +58,7 @@ getFlag x@(x0:x1:_) =
                    "-f" -> Path    x1
                    "-t" -> Title   x1
                    "-j" -> Journal x1
+                   "-v" -> Volume  x1
                    "-i" -> Issue   x1
                    "-d" -> Date    x1
                    "-p" -> Pages   x1
@@ -73,15 +75,15 @@ opendb :: IO Connection
 opendb = do
     conn <- connectSqlite3 dbName
     run conn  ("CREATE TABLE " ++ tableName ++ "(id       INTEGER PRIMARY KEY,\
-                                              \ path     VARCHAR(1000),\
-                                              \ title    VARCHAR(1000),\
-                                              \ authors  VARCHAR(1000),\
-                                              \ keywords VARCHAR(1000),\
-                                              \ journal  VARCHAR(1000),\
-                                              \ volume   VARCHAR(1000),\
-                                              \ issue    VARCHAR(1000),\
-                                              \ date     VARCHAR(1000),\
-                                              \ pages    VARCHAR(1000));") []
+                                              \ Path     VARCHAR(1000),\
+                                              \ Title    VARCHAR(1000),\
+                                              \ Authors  VARCHAR(1000),\
+                                              \ Keywords VARCHAR(1000),\
+                                              \ Journal  VARCHAR(1000),\
+                                              \ Volume   VARCHAR(1000),\
+                                              \ Issue    VARCHAR(1000),\
+                                              \ Date     VARCHAR(1000),\
+                                              \ Pages    VARCHAR(1000));") []
     commit conn
     return conn
 
