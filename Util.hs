@@ -1,7 +1,6 @@
 module Util (
     Operation (..),
     parseArg,
-    parseArgs,
     progName,
     progVersion,
     usage
@@ -49,10 +48,6 @@ usage Help = "usage: " ++ progName ++ " [operation] [id]\n\
              \    version"   
 
 usage op = show op ++ " not yet implemented" 
-
-parseArgs :: [String] -> Either String Operation
-parseArgs [] = Left $ "No operation specified ('" ++ progName ++ " help' for help)" 
-parseArgs xs = parseArg $ head xs
 
 parseArg :: String -> Either String Operation
 parseArg op = case op of  
