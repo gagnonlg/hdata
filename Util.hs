@@ -1,5 +1,6 @@
 module Util (
     Operation (..),
+    isHelp,
     parseArg,
     progName,
     progVersion,
@@ -21,6 +22,9 @@ data Operation = Add
                | View
                | Version
                deriving (Show)
+
+isHelp :: String -> Bool
+isHelp str = str `elem` ["-h","help","--help"]
 
 usage :: Operation -> String
 usage op = show op ++ " not yet implemented" 
