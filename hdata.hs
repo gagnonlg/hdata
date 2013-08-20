@@ -13,6 +13,18 @@ import View
 help :: [String] -> IO ()
 help argv = putStrLn $ usage Help
 
+usageHelp = "usage: " ++ progName ++ " [operation] [id]\n\
+             \operations:\n\
+             \    add                  <filters>     \n\
+             \    bookmark [options]             [id]\n\    
+             \    citation [options]             [id]\n\    
+             \    help     [operation]               \n\    
+             \    modify   [options]   <filters> <id>\n\    
+             \    remove   [options]             <id>\n\    
+             \    search   [options]   [filters] [id]\n\    
+             \    view     [options]             <id>\n\    
+             \    version"   
+
 version :: IO ()
 version = putStrLn $ progName ++ " " ++ progVersion
 
