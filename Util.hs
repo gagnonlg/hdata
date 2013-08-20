@@ -14,7 +14,7 @@ import System.Environment
 dbName = progName ++ ".db"
 progName = "hdata"
 progVersion = "0.0"
-tableName = progName ++ "Table"
+tableName = "mainTable"
 
 data Operation = Add
                | Bookmark
