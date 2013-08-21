@@ -43,6 +43,11 @@ isDate :: String -> Bool
 isDate str = and [and (map isDigit str), (size == 4) || (size == 6) || (size == 8)]
     where size = length str
 
+isPages :: String -> Bool
+isPages str = and (map isDigit (pf ++ pt))
+    where (pf,pt') = break (=='-') str
+          pt       = if null pt' then "0" else tail pt'
+
 flagsToString :: [Flag] -> String
 flagsToString xs = foldl' step [] xs
     where step ys x = show x ++ "\n" ++ ys
@@ -71,7 +76,10 @@ getFlag x@(x0:x1:_) =
                              then Right $ Date x1 
                              else Left $ "Invalid date: " ++ x1 ++ " ('" ++ progName ++ "\
                                          \ add help' for help)"
-                 "-p" -> Right $ Pages   x1
+                 "-p" -> if isPages x1 
+                             then Right $ Pages x1
+                             else Left $ "Invalid pages: " ++ x1 ++ " ('" ++ progName ++ "\
+                                         \ add help' for help)"
                  "-k" -> Right $ Keywords $ getValues $ tail  x
                  "-a" -> Right $ Authors  $ getValues $ tail  x
 
