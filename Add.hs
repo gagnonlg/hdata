@@ -7,6 +7,7 @@ import Data.Char
 import Data.List
 import Database.HDBC
 import Database.HDBC.Sqlite3
+import System.Directory
 import Util
 
 data Flag = Path String
@@ -18,10 +19,15 @@ data Flag = Path String
           | Issue String
           | Date String
           | Pages String
-          deriving (Show)
+          deriving (Eq,Show)
 
 isFlag :: String -> Bool
 isFlag f = f `elem` ["-f","-p","-t","-j","-i","-d","-v","-a","-k"]
+
+isPathFlag :: Flag -> Bool
+isPathFlag f = case f of
+    Path _ -> True
+    _     -> False
 
 add :: [String] -> IO ()
 add [] = error $ "add: no arguments specified ('" ++ progName ++ " add help' for help)"
@@ -30,7 +36,9 @@ add argv = if isHelp $ head argv
     else do 
         case parseFlags argv of
             Left  msg   -> error $ "add: " ++ msg
-            Right flags -> do putStrLn (flagsToString flags) >> runSQL (buildSQL flags)
+            Right flags -> do checkFile flags 
+                              putStrLn (flagsToString flags)
+                              runSQL (buildSQL flags)
 
 buildSQL :: [Flag] -> String
 buildSQL flags = buildSQL' ("INSERT INTO " ++ tableName ++ " (") "VALUES(" flags
@@ -38,6 +46,14 @@ buildSQL flags = buildSQL' ("INSERT INTO " ++ tableName ++ " (") "VALUES(" flags
           buildSQL' t1 t2 (f:fs) = buildSQL' (t1++key++",") (t2++"'"++value++"',") fs
               where (key,val) = break (==' ') $ show f
                     value     = filter (/= '\"') (tail val)
+
+checkFile :: [Flag] -> IO ()
+checkFile fs = case filter isPathFlag fs of
+    []     -> return ()
+    ((Path p):_)  -> do exists <- doesFileExist p
+                        if exists 
+                            then do return ()
+                            else do error $ "File does not exists: " ++ p   
 
 isDate :: String -> Bool
 isDate str = and [and (map isDigit str), (size == 4) || (size == 6) || (size == 8)]
