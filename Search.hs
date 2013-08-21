@@ -6,7 +6,11 @@ module Search (
 import Util
 
 search :: [String] -> IO ()
-search argv = putStrLn $ usageSearch
+search [] = error $ "search: no arguments specified ('" ++ progName ++ "\
+                    \ search help' for help)"
+search argv = if isHelp $ head argv
+    then do putStrLn usageSearch
+    else do putStrLn "this has not been implemented yet"
 
 usageSearch :: String
 usageSearch = "usage: " ++ progName ++ " search <filters>\n\
