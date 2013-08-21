@@ -3,6 +3,7 @@ module Add (
     usageAdd
 ) where
 
+import Data.Char
 import Data.List
 import Database.HDBC
 import Database.HDBC.Sqlite3
@@ -38,6 +39,10 @@ buildSQL flags = buildSQL' ("INSERT INTO " ++ tableName ++ " (") "VALUES(" flags
               where (key,val) = break (==' ') $ show f
                     value     = filter (/= '\"') (tail val)
 
+isDate :: String -> Bool
+isDate str = and [and (map isDigit str), (size == 4) || (size == 6) || (size == 8)]
+    where size = length str
+
 flagsToString :: [Flag] -> String
 flagsToString xs = foldl' step [] xs
     where step ys x = show x ++ "\n" ++ ys
@@ -53,20 +58,22 @@ parseFlags argv = parseFlags' [] argv
                   Right f    -> parseFlags' (f:fs) (dropWhile (not . isFlag) (tail xs))
 
 getFlag :: [String] -> Either String Flag
-getFlag x@(x0:x1:_) = 
-    let flag = case x0 of
-                   "-f" -> Path    x1
-                   "-t" -> Title   x1
-                   "-j" -> Journal x1
-                   "-v" -> Volume  x1
-                   "-i" -> Issue   x1
-                   "-d" -> Date    x1
-                   "-p" -> Pages   x1
-                   "-k" -> Keywords $ getValues $ tail  x
-                   "-a" -> Authors  $ getValues $ tail  x
-    in if isFlag x1 
-           then Left "too few argument"
-           else Right flag 
+getFlag x@(x0:x1:_) =
+    if isFlag x1 
+        then Left "too few argument"
+        else case x0 of
+                 "-f" -> Right $ Path    x1
+                 "-t" -> Right $ Title   x1
+                 "-j" -> Right $ Journal x1
+                 "-v" -> Right $ Volume  x1
+                 "-i" -> Right $ Issue   x1
+                 "-d" -> if isDate x1 
+                             then Right $ Date x1 
+                             else Left $ "Invalid date: " ++ x1 ++ " ('" ++ progName ++ "\
+                                         \ add help' for help)"
+                 "-p" -> Right $ Pages   x1
+                 "-k" -> Right $ Keywords $ getValues $ tail  x
+                 "-a" -> Right $ Authors  $ getValues $ tail  x
 
 getValues :: [String] -> String
 getValues argv = intercalate "/" $ takeWhile (not . isFlag) argv 
@@ -110,5 +117,5 @@ usageAdd = "usage: " ++ progName ++ " add <filters>\n\
             \    -k <keyword1 [keyword2] ...>\n\
             \    -j <journal>\n\
             \    -i <issue>\n\
-            \    -d <date>\n\
+            \    -d <date> : <yyyy> OR <mmyyyy> OR <ddmmyyyy>\n\
             \    -p <page-from>-<page-to>"
