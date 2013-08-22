@@ -102,27 +102,6 @@ getFlag x@(x0:x1:_) =
 getValues :: [String] -> String
 getValues argv = intercalate "/" $ takeWhile (not . isFlag) argv 
 
-opendb :: IO Connection
-opendb = do
-    conn <- connectSqlite3 dbName
-    tables <- getTables conn
-    if not (tableName `elem` tables)
-        then do
-             run conn  ("CREATE TABLE " ++ tableName ++ "(id       INTEGER PRIMARY KEY,\
-                                                        \ Path     VARCHAR(1000),\
-                                                        \ Title    VARCHAR(1000),\
-                                                        \ Authors  VARCHAR(1000),\
-                                                        \ Keywords VARCHAR(1000),\
-                                                        \ Journal  VARCHAR(1000),\
-                                                        \ Volume   VARCHAR(1000),\
-                                                        \ Issue    VARCHAR(1000),\
-                                                        \ Date     VARCHAR(1000),\
-                                                        \ Pages    VARCHAR(1000));") []
-             commit conn
-             return conn
-        else do
-             commit conn
-             return conn
 
 runSQL :: String -> IO ()
 runSQL sql = do
