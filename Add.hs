@@ -118,7 +118,9 @@ getFlag x@(x0:x1:_) =
                  "-f" -> Right $ Path    $ getValues " " $ tail x
                  "-t" -> Right $ Title   $ getValues " " $ tail x
                  "-j" -> Right $ Journal $ getValues " " $ tail x
-                 "-v" -> Right $ Volume  x1
+                 "-v" -> if and $ map isDigit x1
+                             then Right $ Volume  x1
+                             else Left $ "Invalid volume: " ++ x1
                  "-y" -> if isYear x1 
                              then Right $ Year x1 
                              else Left $ "Invalid date: " ++ x1 ++ " ('" ++ progName ++ "\
