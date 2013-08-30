@@ -70,7 +70,9 @@ flagsToString xs = foldl' step [] xs
 
 parseFlags :: [String] -> Either String [Flag]
 parseFlags argv = parseFlags' [] argv
-    where parseFlags' _  (x:[]) = Left "too few arguments"
+    where parseFlags' _  (x:[]) = if isFlag x 
+                                    then Left "too few arguments"
+                                    else Left $ "Invalid argument: " ++ x
           parseFlags' fs []     = Right fs
           parseFlags' fs xs     = 
               let flag = getFlag xs
