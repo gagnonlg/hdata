@@ -1,0 +1,10 @@
+==> general:
+* find a solution to reuse the "Flags" datatype in different modules
+    --> allow user to add with -b flag, adding the entry to the bookmarks from the start
+
+==> Add.hs
+* change the database Pages format to something better
+    --> maybe 2 integer fields: page-from, page-to
+    --> input format would be: -p <page1> [page2]
+
+* rewrite getFlag and getValues so that getValues doesn't use 'error'
