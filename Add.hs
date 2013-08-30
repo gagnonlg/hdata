@@ -42,6 +42,10 @@ data Flag = Path String
 isFlag :: String -> Bool
 isFlag f = f `elem` ["-f","-p","-t","-j","-y","-v","-a","-k"]
 
+isKindFlag :: String -> Bool
+isKindFlag ('-':_) = True
+isKindFlag _       = False
+
 isPathFlag :: Flag -> Bool
 isPathFlag f = case f of
     Path _ -> True
@@ -134,7 +138,12 @@ getFlag x@(x0:x1:_) =
                  _    -> Left $ "Invalid argument: " ++ x0
 
 getValues :: String -> [String] -> String
-getValues sep argv = intercalate sep $ takeWhile (not . isFlag) argv 
+getValues sep argv = getValues' "" argv
+    where getValues' str [] = tail str
+          getValues' str (f:fs) | isFlag f     = tail str
+                                | isKindFlag f = error $ "add: Invalid argument: " ++ f
+                                | otherwise    = getValues' (str ++ sep ++ f) fs
+
 
 
 runSQL :: String -> IO ()
