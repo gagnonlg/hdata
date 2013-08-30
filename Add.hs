@@ -47,6 +47,10 @@ isPathFlag f = case f of
     Path _ -> True
     _     -> False
 
+areEqual f1 f2 = f1' == f2' 
+    where (f1',_) = break (==' ') $ show f1
+          (f2',_) = break (==' ') $ show f2
+
 add :: [String] -> IO ()
 add [] = error $ "add: no arguments specified ('" ++ progName ++ " add help' for help)"
 add argv = if isHelp $ head argv 
@@ -54,7 +58,8 @@ add argv = if isHelp $ head argv
     else do 
         case parseFlags argv of
             Left  msg   -> error $ "add: " ++ msg
-            Right flags -> do checkFile flags 
+            Right flags -> do checkDuplicates flags
+                              checkFile flags 
                               putStrLn (flagsToString flags)
                               runSQL (buildSQL flags)
 
@@ -64,6 +69,14 @@ buildSQL flags = buildSQL' ("INSERT INTO " ++ tableName ++ " (") "VALUES(" flags
           buildSQL' t1 t2 (f:fs) = buildSQL' (t1++key++",") (t2++"'"++value++"',") fs
               where (key,val) = break (==' ') $ show f
                     value     = filter (/= '\"') (tail val)
+
+checkDuplicates :: [Flag] -> IO () 
+checkDuplicates (f:[]) = return ()
+checkDuplicates (f:fs) = if or $ map (areEqual f) fs
+                             then do let f' = fst $ break (==' ') $ show f
+                                     error "add: duplicate arguments" 
+                             else do checkDuplicates fs
+
 
 checkFile :: [Flag] -> IO ()
 checkFile fs = case filter isPathFlag fs of
