@@ -16,13 +16,12 @@ data Flag = Path String
           | Keywords String
           | Journal String
           | Volume String
-          | Issue String
           | Date String
           | Pages String
           deriving (Eq,Show)
 
 isFlag :: String -> Bool
-isFlag f = f `elem` ["-f","-p","-t","-j","-i","-d","-v","-a","-k"]
+isFlag f = f `elem` ["-f","-p","-t","-j","-d","-v","-a","-k"]
 
 isPathFlag :: Flag -> Bool
 isPathFlag f = case f of
@@ -89,7 +88,6 @@ getFlag x@(x0:x1:_) =
                  "-t" -> Right $ Title   x1
                  "-j" -> Right $ Journal x1
                  "-v" -> Right $ Volume  x1
-                 "-i" -> Right $ Issue   x1
                  "-d" -> if isDate x1 
                              then Right $ Date x1 
                              else Left $ "Invalid date: " ++ x1 ++ " ('" ++ progName ++ "\
@@ -122,6 +120,5 @@ usageAdd = "usage: " ++ progName ++ " add <filters>\n\
             \    -a <author1 [author2] ...>\n\
             \    -k <keyword1 [keyword2] ...>\n\
             \    -j <journal>\n\
-            \    -i <issue>\n\
             \    -d <date> : <yyyy> OR <mmyyyy> OR <ddmmyyyy>\n\
             \    -p <page-from>-<page-to>"
