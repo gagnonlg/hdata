@@ -98,6 +98,7 @@ getFlag x@(x0:x1:_) =
                                          \ add help' for help)"
                  "-k" -> Right $ Keywords $ getValues $ tail  x
                  "-a" -> Right $ Authors  $ getValues $ tail  x
+                 _    -> Left $ "Invalid argument: " ++ x0
 
 getValues :: [String] -> String
 getValues argv = intercalate "/" $ takeWhile (not . isFlag) argv 
