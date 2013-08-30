@@ -115,9 +115,9 @@ getFlag x@(x0:x1:_) =
     if isFlag x1 
         then Left "too few argument"
         else case x0 of
-                 "-f" -> Right $ Path    x1
-                 "-t" -> Right $ Title   x1
-                 "-j" -> Right $ Journal x1
+                 "-f" -> Right $ Path    $ getValues " " $ tail x
+                 "-t" -> Right $ Title   $ getValues " " $ tail x
+                 "-j" -> Right $ Journal $ getValues " " $ tail x
                  "-v" -> Right $ Volume  x1
                  "-y" -> if isYear x1 
                              then Right $ Year x1 
@@ -127,12 +127,12 @@ getFlag x@(x0:x1:_) =
                              then Right $ Pages x1
                              else Left $ "Invalid pages: " ++ x1 ++ " ('" ++ progName ++ "\
                                          \ add help' for help)"
-                 "-k" -> Right $ Keywords $ getValues $ tail  x
-                 "-a" -> Right $ Authors  $ getValues $ tail  x
+                 "-k" -> Right $ Keywords $ getValues "/" $ tail  x
+                 "-a" -> Right $ Authors  $ getValues "/" $ tail  x
                  _    -> Left $ "Invalid argument: " ++ x0
 
-getValues :: [String] -> String
-getValues argv = intercalate "/" $ takeWhile (not . isFlag) argv 
+getValues :: String -> [String] -> String
+getValues sep argv = intercalate sep $ takeWhile (not . isFlag) argv 
 
 
 runSQL :: String -> IO ()
