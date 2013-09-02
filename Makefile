@@ -1,17 +1,17 @@
 PREFIX ?= /usr
 
 hdata:
-	ghc --make hdata
+	ghc -isrc src/hdata.hs
 
 clean:
-	rm -rf *.o
-	rm -rf *.hi
-	rm -rf *.db
-	rm -rf hdata
+	rm -rf src/*.o
+	rm -rf src/*.hi
+	rm -rf src/*.db
+	rm -rf src/hdata
 
 install:
 	@mkdir -p ${DESTDIR}${PREFIX}/bin
-	@cp -f hdata ${DESTDIR}${PREFIX}/bin
+	@cp -f src/hdata ${DESTDIR}${PREFIX}/bin
 	@chmod 755 ${DESTDIR}${PREFIX}/bin/hdata
 
 uninstall:
