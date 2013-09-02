@@ -6,7 +6,7 @@ hdata:
 clean:
 	rm -rf src/*.o
 	rm -rf src/*.hi
-	rm -rf src/*.db
+	rm -rf *.db
 	rm -rf src/hdata
 
 install:
