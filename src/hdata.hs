@@ -20,13 +20,15 @@
 module Main where
 
 import System.Environment
+
 import Add
 import Bookmark
 import Citation
 import Modify
 import Remove
 import Search
-import Util
+import Tools.Constants
+import Tools.Operation
 import View
 
 help :: [String] -> IO ()

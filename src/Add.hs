@@ -27,7 +27,10 @@ import Data.List
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import System.Directory
-import Util
+
+import Tools.Constants
+import Tools.Operation (isHelp)
+import Tools.SQL
 
 data Flag = Path String
           | Title String

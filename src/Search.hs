@@ -22,7 +22,9 @@ module Search (
     usageSearch
 ) where
 
-import Util
+import Tools.Constants
+import Tools.Operation (isHelp)
+
 
 search :: [String] -> IO ()
 search [] = error $ "search: no arguments specified ('" ++ progName ++ "\

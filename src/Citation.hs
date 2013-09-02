@@ -21,7 +21,7 @@ module Citation (
     citation
 ) where
 
-import Util
+import Tools.Operation
 
 citation :: [String] -> IO ()
 citation argv = putStrLn $ usage Citation

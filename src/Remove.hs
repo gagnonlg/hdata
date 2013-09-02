@@ -21,7 +21,7 @@ module Remove (
     remove
 ) where
 
-import Util
+import Tools.Operation
 
 remove :: [String] -> IO ()
 remove argv = putStrLn $ usage Remove

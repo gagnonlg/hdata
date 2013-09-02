@@ -21,7 +21,7 @@ module Modify (
     modify
 ) where
 
-import Util
+import Tools.Operation
 
 modify :: [String] -> IO ()
 modify argv = putStrLn $ usage Modify

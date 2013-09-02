@@ -21,7 +21,7 @@ module View (
     view
 ) where
 
-import Util
+import Tools.Operation
 
 view :: [String] -> IO ()
 view argv = putStrLn $ usage View

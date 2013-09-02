@@ -1,5 +1,5 @@
 {-
-    Util.hs
+    Tools/Operation.hs
 
     Copyright 2013 Louis-Guillaume Gagnon <louis.guillaume.gagnon@gmail.com>    
 
@@ -17,34 +17,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -}
 
-module Util (
-    -- constants
-    dbName,
-    progName,
-    progVersion,
-    tableName,
-    -- Operations
+module Tools.Operation (
     Operation (..),
     isHelp,
     parseArg,
-    usage,
-    -- SQL
-    createdb,
-    opendb
+    usage
 ) where
 
 import Database.HDBC
 import Database.HDBC.Sqlite3
 import System.Environment
-
-{-- constants --}
-
-dbName = progName ++ ".db"
-progName = "hdata"
-progVersion = "0.0"
-tableName = "mainTable"
-
-{-- Operations parsing helper functions --}
 
 data Operation = Add
                | Bookmark
@@ -77,30 +59,3 @@ parseArg op = case op of
 
 usage :: Operation -> String
 usage op = show op ++ " not yet implemented" 
-
-{-- SQL helper functions --}
-
-createdb :: Connection -> IO Connection
-createdb conn = do run conn ("CREATE TABLE " ++ tableName ++ "(id       INTEGER PRIMARY KEY,\
-                                                        \ Path     VARCHAR(1000),\
-                                                        \ Title    VARCHAR(1000),\
-                                                        \ Authors  VARCHAR(1000),\
-                                                        \ Keywords VARCHAR(1000),\
-                                                        \ Journal  VARCHAR(1000),\
-                                                        \ Volume   VARCHAR(1000),\
-                                                        \ Year     VARCHAR(1000),\
-                                                        \ Pages    VARCHAR(1000),\
-                                                        \ Bookmarked VARCHAR(1000));") []
-                   commit conn
-                   return conn
-
-opendb :: IO Connection
-opendb = do
-    conn <- connectSqlite3 dbName
-    tables <- getTables conn
-    if not (tableName `elem` tables)
-        then do createdb conn
-        else do return conn
-
-
-

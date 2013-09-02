@@ -1,5 +1,5 @@
 {-
-    Bookmark.hs    
+    Tools/Constants.hs
 
     Copyright 2013 Louis-Guillaume Gagnon <louis.guillaume.gagnon@gmail.com>    
 
@@ -17,11 +17,17 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -}
 
-module Bookmark (
-    bookmark
+module Tools.Constants (
+    dbName,
+    progName,
+    progVersion,
+    tableName
 ) where
 
-import Tools.Operation
+import Database.HDBC
+import Database.HDBC.Sqlite3
 
-bookmark :: [String] -> IO ()
-bookmark argv = putStrLn $ usage Bookmark
+dbName = progName ++ ".db"
+progName = "hdata"
+progVersion = "0.0"
+tableName = "mainTable"

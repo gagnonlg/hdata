@@ -1,11 +1,13 @@
 PREFIX ?= /usr
 
 hdata:
-	ghc -isrc src/hdata.hs
+	ghc -isrc -isrc/Tools src/hdata.hs
 
 clean:
 	rm -rf src/*.o
 	rm -rf src/*.hi
+	rm -rf src/Tools/*.o
+	rm -rf src/Tools/*.hi
 	rm -rf *.db
 	rm -rf src/hdata
 
