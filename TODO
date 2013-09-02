@@ -1,5 +1,7 @@
 ==> general design:
 * find a name for the final program
+* Fix the database location problem
+    --> use 'getEnv' and put the database in the home folder
 
 ==> Add.hs
 * change the database Pages format to something better
