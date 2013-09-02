@@ -52,7 +52,8 @@ isPathFlag f = case f of
     Path _ -> True
     _     -> False
 
-areEqual f1 f2 = f1' == f2' 
+areFlagsEqual :: Flag -> Flag -> Bool
+areFlagsEqual f1 f2 = f1' == f2' 
     where (f1',_) = break (==' ') $ show f1
           (f2',_) = break (==' ') $ show f2
 
@@ -77,7 +78,7 @@ buildSQL flags = buildSQL' ("INSERT INTO " ++ tableName ++ " (") "VALUES(" flags
 
 checkDuplicates :: [Flag] -> IO () 
 checkDuplicates (f:[]) = return ()
-checkDuplicates (f:fs) = if or $ map (areEqual f) fs
+checkDuplicates (f:fs) = if or $ map (areFlagsEqual f) fs
                              then do let f' = fst $ break (==' ') $ show f
                                      error "add: duplicate arguments" 
                              else do checkDuplicates fs
