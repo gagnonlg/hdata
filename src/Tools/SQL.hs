@@ -19,7 +19,8 @@
 
 module Tools.SQL (
     createdb,
-    opendb
+    opendb,
+    runSQL
 ) where
 
 import Database.HDBC
@@ -48,6 +49,14 @@ opendb = do
     if not (tableName `elem` tables)
         then do createdb conn
         else do return conn
+
+runSQL :: String -> IO ()
+runSQL sql = do
+    db <- opendb
+    run db sql []
+    commit db
+    disconnect db
+    return ()
 
 
 

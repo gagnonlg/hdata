@@ -154,14 +154,6 @@ getValues sep argv = getValues' "" argv
 
 
 
-runSQL :: String -> IO ()
-runSQL sql = do
-    db <- opendb
-    run db sql []
-    commit db
-    disconnect db
-    return ()
-
 usageAdd :: String
 usageAdd = "usage: " ++ progName ++ " add <filters>\n\
             \filters:\n\
