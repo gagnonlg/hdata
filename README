@@ -1,0 +1,45 @@
+hdata is an sqlite3-powered academic paper database interface, 
+written in Haskell.
+
+=== Installation ===
+
+you will need to install the following dependencies:
+ 
+GHC:          http://www.haskell.org/ghc/        
+Sqlite3:      http://www.sqlite.org
+HDBC-Sqlite3: http://hackage.haskell.org/package/HDBC-sqlite3
+
+to build, simply run:
+
+    $ make
+
+to install, run:
+
+    # make install
+
+alternatively, control the install location with the 'PREFIX' and 'DESTDIR'
+environment variables (or simply edit the Makefile).
+
+=== Using ===
+
+After building and installing,
+
+$ hdata help
+
+=== Development ===
+
+Grab the latest source and report bugs at:
+
+    https://www.github.com/gagnonlg/hdata
+
+Get in touch with the author at:
+
+    louis.guillaume.gagnon@gmail.com
+
+=== ===== ===
+
+Copyright (C) 2013 Louis-Guillaume Gagnon
+
+This program may be freely redistributed under the terms
+of the GNU General Public License, version 3 or later.
+For more information, see 'COPYING'
