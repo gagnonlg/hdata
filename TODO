@@ -9,6 +9,3 @@
 ==> testing:
 * unit testing with quickcheck
 * write tests scripts for stuff we can't unit test
-
-==> build system:
-* investigate change from Makefile to usual haskell build system
