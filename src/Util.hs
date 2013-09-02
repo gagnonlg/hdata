@@ -59,7 +59,8 @@ createdb conn = do run conn ("CREATE TABLE " ++ tableName ++ "(id       INTEGER 
                                                         \ Journal  VARCHAR(1000),\
                                                         \ Volume   VARCHAR(1000),\
                                                         \ Year     VARCHAR(1000),\
-                                                        \ Pages    VARCHAR(1000));") []
+                                                        \ Pages    VARCHAR(1000),\
+                                                        \ Bookmarked VARCHAR(1000));") []
                    commit conn
                    return conn
 

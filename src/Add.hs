@@ -37,10 +37,11 @@ data Flag = Path String
           | Volume String
           | Year String
           | Pages String
+          | Bookmarked String
           deriving (Eq,Show)
 
 isFlag :: String -> Bool
-isFlag f = f `elem` ["-f","-p","-t","-j","-y","-v","-a","-k"]
+isFlag f = f `elem` ["-f","-b","-p","-t","-j","-y","-v","-a","-k"]
 
 isKindFlag :: String -> Bool
 isKindFlag ('-':_) = True
@@ -117,7 +118,9 @@ parseFlags argv = parseFlags' [] argv
 getFlag :: [String] -> Either String Flag
 getFlag x@(x0:x1:_) =
     if isFlag x1 
-        then Left "too few argument"
+        then if x0 == "-b"
+            then Right $ Bookmarked "true"
+            else Left "too few argument"
         else case x0 of
                  "-f" -> Right $ Path    $ getValues " " $ tail x
                  "-t" -> Right $ Title   $ getValues " " $ tail x
@@ -135,6 +138,7 @@ getFlag x@(x0:x1:_) =
                                          \ add help' for help)"
                  "-k" -> Right $ Keywords $ getValues "/" $ tail  x
                  "-a" -> Right $ Authors  $ getValues "/" $ tail  x
+                 "-b" -> Right $ Bookmarked "true"
                  _    -> Left $ "Invalid argument: " ++ x0
 
 getValues :: String -> [String] -> String
