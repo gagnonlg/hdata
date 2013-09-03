@@ -19,9 +19,7 @@
 
 module Tools.SQL (
     buildSQLAdd,
-    createdb,
     getEntry,
-    opendb,
     runSQL
 ) where
 
