@@ -23,8 +23,8 @@ module Search (
 ) where
 
 import Tools.Constants
+import Tools.Filter (usageFilters)
 import Tools.Operation (isHelp)
-
 
 search :: [String] -> IO ()
 search [] = error $ "search: no arguments specified ('" ++ progName ++ "\
@@ -36,15 +36,4 @@ search argv = if isHelp $ head argv
 usageSearch :: String
 usageSearch = "usage: " ++ progName ++ " search <filters>\n\
               \or:\n\
-              \       " ++ progName ++ " search [id]\n\
-              \filters:\n\
-              \    -f <file>\n\
-              \    -t <title>\n\
-              \    -a <author1 [author2] ...>\n\
-              \    -k <keyword1 [keyword2] ...>\n\
-              \    -j <journal>\n\
-              \    -v <volume>\n\
-              \    -i <issue>\n\
-              \    -d <date-from> <date-to>\n\
-              \    -p <page-from> <page-to>\n\
-              \    -b : bookmarks"
+              \       " ++ progName ++ " search [id]\n" ++ usageFilters
