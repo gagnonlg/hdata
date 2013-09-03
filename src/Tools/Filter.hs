@@ -31,3 +31,15 @@ data Filter = File       String
             | Bookmarked String
             deriving (Show)
 
+isFilter :: String -> Bool
+isFilter f = f `elem` ["-f","-t","-a","-k","-j","-v","-y","-p","-b"]
+
+usageFilters :: String
+usageFilters = "filters:\n\
+               \    -f <file>\n\
+               \    -t <title>\n\
+               \    -a <authors>\n\
+               \    -k <keywords>\n\
+               \    -j <journal>\n\
+               \    -y <year> : <yyyy>\n\
+               \    -p <page> [page]"
