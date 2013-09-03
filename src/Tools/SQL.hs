@@ -66,5 +66,17 @@ runSQL sql = do
     disconnect db
     return ()
 
+getFromDB :: String -> IO [[SqlValue]]
+getFromDB sql = do 
+    db <- opendb
+    result <- quickQuery' db sql []
+    disconnect db
+    return result
 
-
+retrieveSqlVal :: Int -> IO (Either String [SqlValue])
+retrieveSqlVal id = do 
+    let sql = "SELECT * FROM " ++ tableName ++ " WHERE id = " ++ (show id)
+    result <- getFromDB sql 
+    case result of
+        []    -> return $ Left $ "entry no. " ++ (show id) ++ " doesn't exist"
+        [val] -> return $ Right val
