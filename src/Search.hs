@@ -22,16 +22,23 @@ module Search (
     usageSearch
 ) where
 
+import Data.Char (isDigit)
+
 import Tools.Constants
-import Tools.Filter (usageFilters)
+import Tools.Filter (rowToString,usageFilters)
 import Tools.Operation (isHelp)
+import Tools.SQL (getEntry)
 
 search :: [String] -> IO ()
 search [] = error $ "search: no arguments specified ('" ++ progName ++ "\
                     \ search help' for help)"
-search argv = if isHelp $ head argv
-    then do putStrLn usageSearch
-    else do putStrLn "this has not been implemented yet"
+search (x:[]) | and $ map isDigit x = do 
+                    entry <- getEntry $ read x
+                    case entry of 
+                        Left msg  -> error $ "search: " ++ msg
+                        Right row -> putStr $ rowToString row
+              | isHelp x  = putStrLn usageSearch
+              | otherwise = error $ "search: invalid id: " ++ x
 
 usageSearch :: String
 usageSearch = "usage: " ++ progName ++ " search <filters>\n\
