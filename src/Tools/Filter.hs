@@ -42,6 +42,11 @@ isLikeFilter f = (length f == 2) && (head f == '-')
 
 isYear :: String -> Bool
 isYear s = (length s == 4) && (and $ map isDigit s)
+                   
+getFilters :: [String] -> Either String [Filter]
+getFilters strs = case getFilterPairs strs of
+    Left  msg   -> Left msg
+    Right pairs -> mapToFilter pairs 
 
 getFilterPairs :: [String] -> Either String [(String,[String])]
 getFilterPairs strs = worker [] strs
@@ -51,7 +56,10 @@ getFilterPairs strs = worker [] strs
                            where (values,rest) = break isLikeFilter xs
 
 toFilter :: (String,[String]) -> Either String Filter
-toFilter (f,vs) = case f of
+toFilter (f,vs) | null vs = if f == "-b"
+                                then Right $ Bookmarked "true"
+                                else Left "too few arguments"
+                | otherwise = case f of
     "-f" -> Right $ File     $ concat $ intersperse " " vs
     "-t" -> Right $ Title    $ concat $ intersperse " " vs
     "-a" -> Right $ Authors  $ concat $ intersperse " | " vs
@@ -80,6 +88,14 @@ toFilter (f,vs) = case f of
                 else Left "too many arguments to -b"
     where vs0 = vs!!0
           vs1 = vs!!1
+
+mapToFilter :: [(String,[String])] -> Either String [Filter]
+mapToFilter strs = worker [] strs
+    where worker fs []     = Right fs
+          worker fs (x:xs) = let f = toFilter x 
+                             in case f of
+                                    Left msg -> Left msg
+                                    Right f  -> worker (f:fs) xs 
 
 usageFilters :: String
 usageFilters = "filters:\n\
