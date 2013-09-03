@@ -20,6 +20,9 @@
 module Tools.Filter (
 ) where
 
+import Data.Char (isDigit)
+import Data.List (intersperse)
+
 data Filter = File       String
             | Title      String
             | Authors    String
@@ -37,12 +40,46 @@ isFilter f = f `elem` ["-f","-t","-a","-k","-j","-v","-y","-p","-b"]
 isLikeFilter :: String -> Bool
 isLikeFilter f = (length f == 2) && (head f == '-') 
 
+isYear :: String -> Bool
+isYear s = (length s == 4) && (and $ map isDigit s)
+
 getFilterPairs :: [String] -> Either String [(String,[String])]
 getFilterPairs strs = worker [] strs
     where worker fs [] = Right fs
           worker fs (x:xs) | not (isFilter x)  = Left $ "Invalid argument: " ++ x 
                            | otherwise         = worker ((x, values):fs) rest
                            where (values,rest) = break isLikeFilter xs
+
+toFilter :: (String,[String]) -> Either String Filter
+toFilter (f,vs) = case f of
+    "-f" -> Right $ File     $ concat $ intersperse " " vs
+    "-t" -> Right $ Title    $ concat $ intersperse " " vs
+    "-a" -> Right $ Authors  $ concat $ intersperse " | " vs
+    "-k" -> Right $ Keywords $ concat $ intersperse " | " vs
+    "-j" -> Right $ Journal  $ concat $ intersperse " " vs
+    "-v" -> if length vs == 1
+                then if and $ map isDigit vs0
+                        then Right $ Volume vs0
+                        else Left  $ "Invalid Volume: " ++ vs0
+                else Left "too many arguments to -v"
+    "-y" -> if length vs == 1
+                then if isYear vs0
+                        then Right $ Year vs0
+                        else Left  $ "Invalid year: " ++ vs0
+                else Left "too many arguments to -y"
+    "-p" -> case length vs of
+                1 -> if and $ map isDigit vs0
+                        then Right $ Pages vs0
+                        else Left  $ "Invalid pages: " ++ vs0
+                2 -> if and $ map isDigit (vs0 ++ vs1)
+                        then Right $ Pages (vs0 ++ " " ++ vs1)
+                        else Left  $ "Invalid pages: " ++ (vs0 ++ " " ++ vs1)
+                _ -> Left "too many arguments to -p"     
+    "-b" -> if null vs 
+                then Right $ Bookmarked "true"
+                else Left "too many arguments to -b"
+    where vs0 = vs!!0
+          vs1 = vs!!1
 
 usageFilters :: String
 usageFilters = "filters:\n\
