@@ -23,14 +23,21 @@ module Tools.SQL (
     runSQL
 ) where
 
+import Data.List (intersperse)
 import Database.HDBC
 import Database.HDBC.Sqlite3
 
 import Tools.Constants
 
+buildSQLAdd :: ([String],[String]) -> String
+buildSQLAdd (ks,vs) = 
+    "INSERT INTO " ++ tableName ++ " (" ++ keys ++ ") VALUES(" ++ vals ++ ");"
+    where keys = concat $ intersperse "," ks
+          vals = "'" ++ (concat (intersperse "','" vs)) ++ "'"
+
 createdb :: Connection -> IO Connection
 createdb conn = do run conn ("CREATE TABLE " ++ tableName ++ "(id       INTEGER PRIMARY KEY,\
-                                                        \ Path     VARCHAR(1000),\
+                                                        \ File     VARCHAR(1000),\
                                                         \ Title    VARCHAR(1000),\
                                                         \ Authors  VARCHAR(1000),\
                                                         \ Keywords VARCHAR(1000),\
