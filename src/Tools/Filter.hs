@@ -18,6 +18,7 @@
 -}
 
 module Tools.Filter (
+    rowToString,
     tryGetFilters,
     usageFilters
 ) where
@@ -99,6 +100,15 @@ pairFilters fs = worker [] [] fs
           worker ks vs (f:fs) = worker (k:ks) (v:vs) fs
               where (k,v') = break (==' ') $ show f
                     v      = filter (/='\"') (tail v')
+
+rowToString :: [String] -> String
+rowToString row = concat $ map conv zipped
+    where zipped = zip ["Id:         ","Path:       ","Title:      ","Authors:    ",
+                        "Keywords:   ","Journal:    ","Volume:     ",
+                        "Pages:      ","Year:       ","Bookmarked: "] row 
+          conv (key,val) | null val  = ""
+                         | otherwise = key ++ val ++ "\n"
+
 
 toFilter :: (String,[String]) -> Either String Filter
 toFilter (f,vs) | null vs = if f == "-b"
