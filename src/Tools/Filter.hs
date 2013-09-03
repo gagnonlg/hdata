@@ -18,10 +18,12 @@
 -}
 
 module Tools.Filter (
+    tryGetFilters
 ) where
 
 import Data.Char (isDigit)
 import Data.List (intersperse)
+import System.Directory (doesFileExist)
 
 data Filter = File       String
             | Title      String
@@ -34,11 +36,46 @@ data Filter = File       String
             | Bookmarked String
             deriving (Show)
 
+tryGetFilters :: [String] -> IO (Either String ([String],[String]));
+tryGetFilters argv = case getFilters argv of
+    Left msg    -> return $ Left msg
+    Right pairs -> if anyDuplicates pairs
+                       then return $ Left "duplicated arguments"
+                       else  do
+        s <- checkFile pairs
+        case s of 
+            Right _  -> return $ Right $ pairFilters pairs
+            Left msg -> return $ Left msg 
+
+areFiltersEqual :: Filter -> Filter -> Bool
+areFiltersEqual f1 f2 = f1' == f2' 
+    where (f1',_) = break (==' ') $ show f1
+          (f2',_) = break (==' ') $ show f2
+
+anyDuplicates :: [Filter] -> Bool
+anyDuplicates (f:[]) = False
+anyDuplicates (f:fs) = if or $ map (areFiltersEqual f) fs
+                             then True
+                             else do anyDuplicates fs
+
+checkFile :: [Filter] -> IO (Either String ()) 
+checkFile fs = case filter isPathFilter fs of
+    []     -> return $ Right ()
+    ((File p):_)  -> do exists <- doesFileExist p
+                        if exists 
+                            then do return $ Right ()
+                            else do return $ Left $ "File does not exists: " ++ p   
+
 isFilter :: String -> Bool
 isFilter f = f `elem` ["-f","-t","-a","-k","-j","-v","-y","-p","-b"]
 
 isLikeFilter :: String -> Bool
 isLikeFilter f = (length f == 2) && (head f == '-') 
+
+isPathFilter :: Filter -> Bool
+isPathFilter f = case f of
+    File _ -> True
+    _      -> False
 
 isYear :: String -> Bool
 isYear s = (length s == 4) && (and $ map isDigit s)
@@ -54,6 +91,13 @@ getFilterPairs strs = worker [] strs
           worker fs (x:xs) | not (isFilter x)  = Left $ "Invalid argument: " ++ x 
                            | otherwise         = worker ((x, values):fs) rest
                            where (values,rest) = break isLikeFilter xs
+
+pairFilters :: [Filter] -> ([String],[String])
+pairFilters fs = worker [] [] fs 
+    where worker ks vs []     = (ks,vs)
+          worker ks vs (f:fs) = worker (k:ks) (v:vs) fs
+              where (k,v') = break (==' ') $ show f
+                    v      = filter (/='\"') (tail v')
 
 toFilter :: (String,[String]) -> Either String Filter
 toFilter (f,vs) | null vs = if f == "-b"
