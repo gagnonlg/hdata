@@ -34,6 +34,16 @@ data Filter = File       String
 isFilter :: String -> Bool
 isFilter f = f `elem` ["-f","-t","-a","-k","-j","-v","-y","-p","-b"]
 
+isLikeFilter :: String -> Bool
+isLikeFilter f = (length f == 2) && (head f == '-') 
+
+getFilterPairs :: [String] -> Either String [(String,[String])]
+getFilterPairs strs = worker [] strs
+    where worker fs [] = Right fs
+          worker fs (x:xs) | not (isFilter x)  = Left $ "Invalid argument: " ++ x 
+                           | otherwise         = worker ((x, values):fs) rest
+                           where (values,rest) = break isLikeFilter xs
+
 usageFilters :: String
 usageFilters = "filters:\n\
                \    -f <file>\n\
