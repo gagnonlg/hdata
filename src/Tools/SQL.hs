@@ -20,6 +20,7 @@
 module Tools.SQL (
     buildSQLAdd,
     createdb,
+    getEntry,
     opendb,
     runSQL
 ) where
@@ -73,8 +74,18 @@ getFromDB sql = do
     disconnect db
     return result
 
-retrieveSqlVal :: Int -> IO (Either String [SqlValue])
-retrieveSqlVal id = do 
+getEntry :: Int -> IO (Either String [String])
+getEntry id = do row <- retrieveSqlValues id 
+                 case row of
+                    Left msg      -> return $ Left msg
+                    Right sqlVals -> return $ Right $ map fromSqlToString sqlVals
+
+fromSqlToString :: SqlValue -> String
+fromSqlToString SqlNull = ""
+fromSqlToString value = fromSql value
+
+retrieveSqlValues :: Int -> IO (Either String [SqlValue])
+retrieveSqlValues id = do 
     let sql = "SELECT * FROM " ++ tableName ++ " WHERE id = " ++ (show id)
     result <- getFromDB sql 
     case result of
