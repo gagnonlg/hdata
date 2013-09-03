@@ -29,7 +29,7 @@ import Database.HDBC.Sqlite3
 import System.Directory
 
 import Tools.Constants
-import Tools.Filter (tryGetFilters)
+import Tools.Filter (tryGetFilters, usageFilters)
 import Tools.Operation (isHelp)
 import Tools.SQL (buildSQLAdd, runSQL)
 
@@ -44,12 +44,4 @@ add argv = if isHelp $ head argv
                                 runSQL sql 
 
 usageAdd :: String
-usageAdd = "usage: " ++ progName ++ " add <filters>\n\
-            \filters:\n\
-            \    -f <file>\n\
-            \    -t <title>\n\
-            \    -a <author1 [author2] ...>\n\
-            \    -k <keyword1 [keyword2] ...>\n\
-            \    -j <journal>\n\
-            \    -y <year> : <yyyy>\n\
-            \    -p <page-from>-<page-to>"
+usageAdd = "usage: " ++ progName ++ " add <filters>\n" ++ usageFilters

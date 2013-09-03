@@ -18,7 +18,8 @@
 -}
 
 module Tools.Filter (
-    tryGetFilters
+    tryGetFilters,
+    usageFilters
 ) where
 
 import Data.Char (isDigit)
