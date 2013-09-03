@@ -3,11 +3,6 @@
 * Fix the database location problem
     --> use 'getEnv' and put the database in the home folder
 
-==> Add.hs
-* change the database Pages format to something better
-    --> maybe 2 integer fields: page-from, page-to
-    --> input format would be: -p <page1> [page2]
-
 ==> testing:
 * unit testing with quickcheck
 * write tests scripts for stuff we can't unit test
