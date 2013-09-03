@@ -18,6 +18,7 @@
 -}
 
 module Tools.SQL (
+    buildSQLAdd,
     createdb,
     opendb,
     runSQL
