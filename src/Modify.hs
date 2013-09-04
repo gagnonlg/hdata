@@ -21,7 +21,30 @@ module Modify (
     modify
 ) where
 
-import Tools.Operation
+import Data.Char (isDigit)
+
+import Tools.Constants
+import Tools.Operation (isHelp)
 
 modify :: [String] -> IO ()
-modify argv = putStrLn $ usage Modify
+modify []      = error errTooFew
+modify (f:[])  = if isHelp f then putStrLn usageModify else error errTooFew
+modify (id:fs) = if or (map (not . isDigit) id) 
+                     then error $ "modify: invalid id: " ++ id
+                     else return () 
+
+errTooFew :: String 
+errTooFew = "modify: too few arguments ('" ++ progName ++ " modify help' for help)"
+
+usageModify :: String
+usageModify = "usage: " ++ progName ++ " modify <id> <filters>\n\
+              \filters:\n\
+              \    -f <new file>\n\
+              \    -t <new title>\n\
+              \    -a +<author-add> <author-remove>\n\
+              \    -k +<keyword-add> <keyword-remove>\n\
+              \    -j <new journal>\n\
+              \    -v <new volume>\n\
+              \    -y <new year>\n\
+              \    -p <new page-from> <new page-to>\n\
+              \    -b"
