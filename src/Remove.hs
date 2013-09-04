@@ -32,7 +32,7 @@ import Tools.SQL (getEntry, removeEntry)
 
 remove :: [String] -> IO ()
 remove [] = error $ "remove: too few arguments ('" ++ progName ++ 
-                    " remove help') for help"
+                    " remove help' for help)"
 remove argv | length argv > 1 = error $  "remove: too many arguments ('" ++ 
                                           progName ++ " remove help') for help"
             | isHelp (argv!!0)            = putStrLn usageRemove
