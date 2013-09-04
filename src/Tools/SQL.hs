@@ -21,6 +21,7 @@ module Tools.SQL (
     addEntry,
     getAllEntries,
     getEntry,
+    removeEntry,
     searchEntries
 ) where
 
@@ -106,6 +107,9 @@ retrieveSqlValues id = do
     case result of
         []    -> return $ Left $ "entry no. " ++ (show id) ++ " doesn't exist"
         [val] -> return $ Right val
+
+removeEntry :: Int -> IO ()
+removeEntry id = runSQL $ "DELETE FROM " ++ tableName ++ " WHERE id = " ++ (show id)
 
 searchEntries :: ([String],[String]) -> IO [[String]]
 searchEntries ([],[]) = getAllEntries

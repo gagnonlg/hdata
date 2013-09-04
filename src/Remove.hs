@@ -23,18 +23,35 @@ module Remove (
 ) where
 
 import Data.Char (isDigit)
+import System.IO (hFlush,stdout)
 
 import Tools.Constants
+import Tools.Filter (rowToString)
 import Tools.Operation (isHelp)
+import Tools.SQL (getEntry, removeEntry)
 
 remove :: [String] -> IO ()
 remove [] = error $ "remove: too few arguments ('" ++ progName ++ 
                     " remove help') for help"
 remove argv | length argv > 1 = error $  "remove: too many arguments ('" ++ 
                                           progName ++ " remove help') for help"
-            | isHelp (argv!!0)           = putStrLn usageRemove
+            | isHelp (argv!!0)            = putStrLn usageRemove
             | or (map (not . isDigit) id) = error $ "remove: invalid id: " ++ id
+            | otherwise                   = askRemove id
             where id = argv!!0
+
+askRemove :: String -> IO ()
+askRemove id = do
+    entry <- getEntry $ read id
+    case entry of
+        Left msg  -> error $ "remove: " ++ msg
+        Right row -> do putStrLn $ rowToString row
+                        putStr "Remove this entry? [y/n] "
+                        hFlush stdout
+                        answer <- getLine
+                        case answer of
+                            "y" -> removeEntry $ read id
+                            _   -> return ()
 
 usageRemove :: String
 usageRemove = "usage: " ++ progName ++ " remove <id>"
