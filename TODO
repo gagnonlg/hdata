@@ -6,3 +6,6 @@
 ==> testing:
 * unit testing with quickcheck
 * write tests scripts for stuff we can't unit test
+
+==> search.hs:
+* currently prints a newline on discarded entries, fix this.
