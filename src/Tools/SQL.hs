@@ -19,6 +19,7 @@
 
 module Tools.SQL (
     buildSQLAdd,
+    getAllEntries,
     getEntry,
     runSQL
 ) where
@@ -78,9 +79,17 @@ getEntry id = do row <- retrieveSqlValues id
                     Left msg      -> return $ Left msg
                     Right sqlVals -> return $ Right $ map fromSqlToString sqlVals
 
+getAllEntries :: IO [[String]]
+getAllEntries = do
+    rows <- retrieveAllRows
+    return $ map (map fromSqlToString) rows 
+
 fromSqlToString :: SqlValue -> String
 fromSqlToString SqlNull = ""
 fromSqlToString value = fromSql value
+
+retrieveAllRows :: IO [[SqlValue]]
+retrieveAllRows = getFromDB $ "SELECT * FROM " ++ tableName 
 
 retrieveSqlValues :: Int -> IO (Either String [SqlValue])
 retrieveSqlValues id = do 

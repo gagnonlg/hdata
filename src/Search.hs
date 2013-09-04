@@ -23,15 +23,19 @@ module Search (
 ) where
 
 import Data.Char (isDigit)
+import Data.List (intersperse)
 
 import Tools.Constants
 import Tools.Filter (rowToString,usageFilters)
 import Tools.Operation (isHelp)
-import Tools.SQL (getEntry)
+import Tools.SQL (getAllEntries,getEntry)
 
 search :: [String] -> IO ()
-search [] = error $ "search: no arguments specified ('" ++ progName ++ "\
-                    \ search help' for help)"
+
+search [] = do
+    entries <- getAllEntries
+    putStr $ concat $ intersperse "\n" $ map rowToString entries
+
 search (x:[]) | and $ map isDigit x = do 
                     entry <- getEntry $ read x
                     case entry of 
