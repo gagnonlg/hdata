@@ -18,10 +18,23 @@
 -}
 
 module Remove (
-    remove
+    remove,
+    usageRemove
 ) where
 
-import Tools.Operation
+import Data.Char (isDigit)
+
+import Tools.Constants
+import Tools.Operation (isHelp)
 
 remove :: [String] -> IO ()
-remove argv = putStrLn $ usage Remove
+remove [] = error $ "remove: too few arguments ('" ++ progName ++ 
+                    " remove help') for help"
+remove argv | length argv > 1 = error $  "remove: too many arguments ('" ++ 
+                                          progName ++ " remove help') for help"
+            | isHelp (argv!!0)           = putStrLn usageRemove
+            | or (map (not . isDigit) id) = error $ "remove: invalid id: " ++ id
+            where id = argv!!0
+
+usageRemove :: String
+usageRemove = "usage: " ++ progName ++ " remove <id>"
