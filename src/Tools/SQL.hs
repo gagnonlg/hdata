@@ -18,10 +18,9 @@
 -}
 
 module Tools.SQL (
-    buildSQLAdd,
+    addEntry,
     getAllEntries,
     getEntry,
-    runSQL,
     searchEntries
 ) where
 
@@ -30,6 +29,9 @@ import Database.HDBC
 import Database.HDBC.Sqlite3
 
 import Tools.Constants
+
+addEntry :: ([String],[String]) -> IO ()
+addEntry pairs = return (buildSQLAdd pairs) >>= runSQL
 
 buildSQLAdd :: ([String],[String]) -> String
 buildSQLAdd (ks,vs) = 

@@ -31,7 +31,7 @@ import System.Directory
 import Tools.Constants
 import Tools.Filter (tryGetFilters, usageFilters)
 import Tools.Operation (isHelp)
-import Tools.SQL (buildSQLAdd, runSQL)
+import Tools.SQL (addEntry)
 
 add :: [String] -> IO ()
 add [] = error $ "add: no arguments specified ('" ++ progName ++ " add help' for help)"
@@ -40,8 +40,7 @@ add argv = if isHelp $ head argv
     else do filters <- tryGetFilters argv
             case filters of
                 Left  msg -> error $ "add: " ++ msg
-                Right fs  -> do let sql = buildSQLAdd fs
-                                runSQL sql 
+                Right fs  -> addEntry fs
 
 usageAdd :: String
 usageAdd = "usage: " ++ progName ++ " add <filters>\n" ++ usageFilters
