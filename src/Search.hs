@@ -26,9 +26,9 @@ import Data.Char (isDigit)
 import Data.List (intersperse)
 
 import Tools.Constants
-import Tools.Filter (rowToString,usageFilters)
+import Tools.Filter 
 import Tools.Operation (isHelp)
-import Tools.SQL (getAllEntries,getEntry)
+import Tools.SQL (getAllEntries,getEntry,searchEntries)
 
 search :: [String] -> IO ()
 
@@ -43,6 +43,19 @@ search (x:[]) | and $ map isDigit x = do
                         Right row -> putStr $ rowToString row
               | isHelp x  = putStrLn usageSearch
               | otherwise = error $ "search: invalid id: " ++ x
+
+search xs = do
+    filters <- tryGetFilters xs
+    case filters of
+        Left msg -> error $ "search: " ++ msg
+        Right fs -> do
+            let (single,multi) = separateMulti fs
+            let as = getValues "Authors"  multi
+            let ks = getValues "Keywords" multi 
+            let ps = getValues "Pages"    multi 
+            entries <- searchEntries single 
+            let entries' = filtA as $ filtK ks $ filtP ps entries
+            putStr $ concat $ intersperse "\n" $ map rowToString entries'
 
 usageSearch :: String
 usageSearch = "usage: " ++ progName ++ " search <filters>\n\

@@ -21,7 +21,8 @@ module Tools.SQL (
     buildSQLAdd,
     getAllEntries,
     getEntry,
-    runSQL
+    runSQL,
+    searchEntries
 ) where
 
 import Data.List (intersperse)
@@ -35,6 +36,11 @@ buildSQLAdd (ks,vs) =
     "INSERT INTO " ++ tableName ++ " (" ++ keys ++ ") VALUES(" ++ vals ++ ");"
     where keys = concat $ intersperse "," ks
           vals = "'" ++ (concat (intersperse "','" vs)) ++ "'"
+
+buildSQLSearch :: ([String],[String]) -> String
+buildSQLSearch ps = "SELECT * FROM " ++ tableName ++ " WHERE " ++ values ps
+    where values ((k:[]),(v:[])) = k ++ "='" ++ v ++ "';"
+          values ((k:ks),(v:vs)) = k ++ "='" ++ v ++ "'" ++ " AND " ++ values (ks,vs)
 
 createdb :: Connection -> IO Connection
 createdb conn = do run conn ("CREATE TABLE " ++ tableName ++ "(id       INTEGER PRIMARY KEY,\
@@ -98,3 +104,13 @@ retrieveSqlValues id = do
     case result of
         []    -> return $ Left $ "entry no. " ++ (show id) ++ " doesn't exist"
         [val] -> return $ Right val
+
+searchEntries :: ([String],[String]) -> IO [[String]]
+searchEntries ([],[]) = getAllEntries
+searchEntries ps = do 
+    let sql = buildSQLSearch ps
+    entries <- getFromDB sql
+    return $ map (map fromSqlToString) entries
+
+
+

@@ -18,13 +18,18 @@
 -}
 
 module Tools.Filter (
+    filtA,
+    filtK,
+    filtP,
+    getValues,
     rowToString,
+    separateMulti,
     tryGetFilters,
     usageFilters
 ) where
 
 import Data.Char (isDigit)
-import Data.List (intersperse)
+import Data.List (intersect,intersperse)
 import System.Directory (doesFileExist)
 
 data Filter = File       String
@@ -81,7 +86,34 @@ isPathFilter f = case f of
 
 isYear :: String -> Bool
 isYear s = (length s == 4) && (and $ map isDigit s)
-                   
+
+filtA :: String -> [[String]] -> [[String]]
+filtA [] rs = rs
+filtA xs rs = map filtA' rs
+    where filtA' row = let xas = multiToList xs 
+                           ras = multiToList (row!!3)    
+                       in if null $ intersect xas ras
+                             then [];
+                             else row
+ 
+filtK :: String -> [[String]] -> [[String]]
+filtK [] rs = rs
+filtK xs rs = map filtK' rs
+    where filtK' row = let xas = multiToList xs 
+                           ras = multiToList (row!!4)    
+                       in if null $ intersect xas ras
+                             then [];
+                             else row
+
+filtP :: String -> [[String]] -> [[String]]
+filtP [] rs = rs
+filtP xs rs = map filtP' rs
+    where filtP' row = let xas = multiToList xs 
+                           ras = multiToList (row!!8)    
+                       in if null $ intersect xas ras
+                             then [];
+                             else row
+
 getFilters :: [String] -> Either String [Filter]
 getFilters strs = case getFilterPairs strs of
     Left  msg   -> Left msg
@@ -93,6 +125,11 @@ getFilterPairs strs = worker [] strs
           worker fs (x:xs) | not (isFilter x)  = Left $ "Invalid argument: " ++ x 
                            | otherwise         = worker ((x, values):fs) rest
                            where (values,rest) = break isLikeFilter xs
+
+getValues :: String -> ([String],[String]) -> String
+getValues _ ([],[]) = []
+getValues key ((k:ks),(v:vs)) | k == key  = v
+                              | otherwise = getValues key (ks,vs)
 
 pairFilters :: [Filter] -> ([String],[String])
 pairFilters fs = worker [] [] fs 
@@ -109,6 +146,20 @@ rowToString row = concat $ map conv zipped
           conv (key,val) | null val  = ""
                          | otherwise = key ++ val ++ "\n"
 
+separateMulti :: ([String],[String]) -> (([String],[String]),([String],[String]))
+separateMulti ps = worker [] [] [] [] ps
+    where worker k1 v1 k2 v2 ([],[]) = ((k1,v1),(k2,v2))
+          worker k1 v1 k2 v2 ((k:ks),(v:vs)) 
+              | k `elem` ["Authors","Keywords","Pages"] = 
+                            worker k1 v1 (k:k2) (v:v2) (ks,vs)
+              | otherwise = worker (k:k1) (v:v1) k2 v2 (ks,vs)
+
+multiToList :: String -> [String]
+multiToList [] = []
+multiToList xs = let (v,rest) = break (=='|') xs
+                 in if null rest 
+                        then [v]
+                        else v : (multiToList $ tail rest)
 
 toFilter :: (String,[String]) -> Either String Filter
 toFilter (f,vs) | null vs = if f == "-b"
@@ -117,8 +168,8 @@ toFilter (f,vs) | null vs = if f == "-b"
                 | otherwise = case f of
     "-f" -> Right $ File     $ concat $ intersperse " " vs
     "-t" -> Right $ Title    $ concat $ intersperse " " vs
-    "-a" -> Right $ Authors  $ concat $ intersperse " | " vs
-    "-k" -> Right $ Keywords $ concat $ intersperse " | " vs
+    "-a" -> Right $ Authors  $ concat $ intersperse "|" vs
+    "-k" -> Right $ Keywords $ concat $ intersperse "|" vs
     "-j" -> Right $ Journal  $ concat $ intersperse " " vs
     "-v" -> if length vs == 1
                 then if and $ map isDigit vs0
@@ -136,7 +187,7 @@ toFilter (f,vs) | null vs = if f == "-b"
                         else Left  $ "Invalid pages: " ++ vs0
                 2 -> if and $ map isDigit (vs0 ++ vs1)
                         then Right $ Pages (vs0 ++ " " ++ vs1)
-                        else Left  $ "Invalid pages: " ++ (vs0 ++ " " ++ vs1)
+                        else Left  $ "Invalid pages: " ++ (vs0 ++ "|" ++ vs1)
                 _ -> Left "too many arguments to -p"     
     "-b" -> if null vs 
                 then Right $ Bookmarked "true"
