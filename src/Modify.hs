@@ -24,14 +24,24 @@ module Modify (
 import Data.Char (isDigit)
 
 import Tools.Constants
+import Tools.Filter (tryGetFilters)
 import Tools.Operation (isHelp)
+import Tools.SQL (getEntry)
 
 modify :: [String] -> IO ()
 modify []      = error errTooFew
 modify (f:[])  = if isHelp f then putStrLn usageModify else error errTooFew
 modify (id:fs) = if or (map (not . isDigit) id) 
                      then error $ "modify: invalid id: " ++ id
-                     else return () 
+                     else do entry <- getEntry $ read id
+                             case entry of
+                                 Left msg -> error $ "modify: " ++ msg
+                                 Right row -> do filters <- tryGetFilters fs 
+                                                 case filters of
+                                                    Left msg -> error $ "modify: " ++ msg
+                                                    --Right fs' -> doModify row fs'
+                                                    Right fs' -> putStrLn "not yet implemented"
+
 
 errTooFew :: String 
 errTooFew = "modify: too few arguments ('" ++ progName ++ " modify help' for help)"
