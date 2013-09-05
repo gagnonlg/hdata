@@ -46,7 +46,13 @@ doView :: String -> String -> IO ()
 doView id viewer = putStrLn "not yet implemented"
 
 tryGetViewer :: [String] -> Either String String
-tryGetViewer xs = Right ""
+tryGetViewer (f:[])   | f == "-v" = Left $ "too few arguments ('" ++ progName ++ 
+                                           " view help' for help)"
+                      | otherwise = Left $ "invalid argument: " ++ f
+tryGetViewer (f:v:[]) | f == "-v" = Right v
+                      | otherwise = Left $ "invalid argument: " ++ f
+tryGetViewer _ = Left $ "too many arguments ('" ++ progName ++ " view help' for help)"
+
 
 errTooFew :: String
 errTooFew = "view: too few arguments ('" ++ progName ++ " view help' for help)"
