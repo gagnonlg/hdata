@@ -25,6 +25,7 @@ module View (
 import Data.Char (isDigit)
 import System.Process (runProcess)
 
+import Config (defaultViewer)
 import Tools.Constants
 import Tools.Operation (isHelp)
 import Tools.Filter (getPath)
@@ -35,7 +36,7 @@ view :: [String] -> IO ()
 view [] = error errTooFew
 
 view (x:[]) | isHelp x            = putStrLn usageView
-            | and (map isDigit x) = doView x "zathura"
+            | and (map isDigit x) = doView x defaultViewer 
             | otherwise           = error $ "view: invalid id: " ++ x
 
 view (x:xs) = do
