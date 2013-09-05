@@ -1,3 +1,6 @@
+==> general
+* write the man page
+
 ==> search.hs:
 * currently prints a newline on discarded entries, fix this.
 
