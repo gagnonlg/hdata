@@ -57,5 +57,4 @@ usageModify = "usage: " ++ progName ++ " modify <id> <filters>\n\
               \    -j <new journal>\n\
               \    -v <new volume>\n\
               \    -y <new year>\n\
-              \    -p <new page-from> <new page-to>\n\
-              \    -b"
+              \    -p <new page-from> <new page-to>"

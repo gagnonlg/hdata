@@ -42,7 +42,6 @@ data Filter = File       String
             | Volume     String
             | Year       String
             | Pages      String
-            | Bookmarked String
             deriving (Show)
 
 tryGetFilters :: [String] -> IO (Either String ([String],[String]));
@@ -76,7 +75,7 @@ checkFile fs = case filter isPathFilter fs of
                             else do return $ Left $ "File does not exists: " ++ p   
 
 isFilter :: String -> Bool
-isFilter f = f `elem` ["-f","-t","-a","-k","-j","-v","-y","-p","-b"]
+isFilter f = f `elem` ["-f","-t","-a","-k","-j","-v","-y","-p"]
 
 isLikeFilter :: String -> Bool
 isLikeFilter f = (length f == 2) && (head f == '-') 
@@ -152,7 +151,7 @@ rowToString :: [String] -> String
 rowToString row = concat $ map conv zipped
     where zipped = zip ["Id:         ","Path:       ","Title:      ","Authors:    ",
                         "Keywords:   ","Journal:    ","Volume:     ",
-                        "Year:       ","Pages:      ","Bookmarked: "] row 
+                        "Year:       ","Pages:      "] row 
           conv (key,val) | null val  = ""
                          | otherwise = key ++ val ++ "\n"
 
@@ -180,9 +179,7 @@ multiToList xs = let (v,rest) = break (=='|') xs
                         else v : (multiToList $ tail rest)
 
 toFilter :: (String,[String]) -> Either String Filter
-toFilter (f,vs) | null vs = if f == "-b"
-                                then Right $ Bookmarked "true"
-                                else Left "too few arguments"
+toFilter (f,vs) | null vs = Left "too few arguments"
                 | otherwise = case f of
     "-f" -> Right $ File     $ concat $ intersperse " " vs
     "-t" -> Right $ Title    $ concat $ intersperse " " vs
@@ -207,9 +204,6 @@ toFilter (f,vs) | null vs = if f == "-b"
                         then Right $ Pages (vs0 ++ " " ++ vs1)
                         else Left  $ "Invalid pages: " ++ (vs0 ++ "|" ++ vs1)
                 _ -> Left "too many arguments to -p"     
-    "-b" -> if null vs 
-                then Right $ Bookmarked "true"
-                else Left "too many arguments to -b"
     where vs0 = vs!!0
           vs1 = vs!!1
 

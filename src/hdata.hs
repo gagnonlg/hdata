@@ -22,7 +22,6 @@ module Main where
 import System.Environment
 
 import Add
-import Bookmark
 import Modify
 import Remove
 import Search
@@ -36,7 +35,6 @@ help argv = putStrLn $ usageHelp
 usageHelp = "usage: " ++ progName ++ " [operation] [id]\n\
              \operations:\n\
              \    add                  <filters>     \n\
-             \    bookmark [options]             [id]\n\    
              \    help     [operation]               \n\    
              \    modify   [options]   <filters> <id>\n\    
              \    remove   [options]             <id>\n\    
@@ -62,7 +60,6 @@ main = do
         let argv' = tail argv 
         case parseArg (head argv) of
             Right Add      -> add argv'
-            Right Bookmark -> bookmark argv'
             Right Help     -> help argv'
             Right Modify   -> modify argv'
             Right Remove   -> remove argv'
