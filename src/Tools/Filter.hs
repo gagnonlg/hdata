@@ -32,7 +32,7 @@ module Tools.Filter (
 
 import Data.Char (isDigit)
 import Data.List (intersect,intersperse,(\\))
-import System.Directory (doesFileExist, getCurrentDirectory)
+import System.Directory (canonicalizePath,doesFileExist)
 
 data Filter = File       String
             | Title      String
@@ -77,9 +77,9 @@ checkFile fs = case filter isPathFilter fs of
     []     -> return $ Right ""
     ((File p):_)  -> do exists <- doesFileExist p
                         if exists 
-                            then do cd <- getCurrentDirectory
-                                    return $ Right $ cd ++ "/" ++ p
-                            else do return $ Left $ "File does not exists: " ++ p   
+                            then do path <- canonicalizePath p
+                                    return $ Right path
+                            else return $ Left $ "File does not exists: " ++ p   
 
 isFilter :: String -> Bool
 isFilter f = f `elem` ["-f","-t","-a","-k","-j","-v","-y","-p"]
