@@ -18,16 +18,12 @@
 -}
 
 module Tools.Constants (
-    dbName,
     progName,
     progVersion,
-    tableName
 ) where
 
 import Database.HDBC
 import Database.HDBC.Sqlite3
 
-dbName = progName ++ ".db"
 progName = "hdata"
 progVersion = "0.0"
-tableName = "mainTable"

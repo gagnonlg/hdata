@@ -29,8 +29,19 @@ module Tools.SQL (
 import Data.List (intersperse)
 import Database.HDBC
 import Database.HDBC.Sqlite3
+import System.Directory (createDirectoryIfMissing)
+import System.Environment (getEnv)
 
 import Tools.Constants
+
+tableName :: String
+tableName = "mainTable"
+
+dbDir :: IO String
+dbDir = getEnv "HOME" >>= (\s -> return $ s ++ "/." ++ progName)
+
+dbName :: IO String
+dbName = dbDir >>= (\s -> return $ s ++ "/" ++ progName ++ ".db")
 
 addEntry :: ([String],[String]) -> IO ()
 addEntry pairs = return (buildSQLAdd pairs) >>= runSQL
@@ -68,7 +79,10 @@ createdb conn = do run conn ("CREATE TABLE " ++ tableName ++ "(id       INTEGER 
 
 opendb :: IO Connection
 opendb = do
-    conn <- connectSqlite3 dbName
+    dir <- dbDir
+    createDirectoryIfMissing False dir
+    name <- dbName
+    conn <- connectSqlite3 name
     tables <- getTables conn
     if not (tableName `elem` tables)
         then do createdb conn
