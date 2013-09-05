@@ -21,7 +21,37 @@ module View (
     view
 ) where
 
-import Tools.Operation
+import Data.Char (isDigit)
+
+import Tools.Constants
+import Tools.Operation (isHelp)
 
 view :: [String] -> IO ()
-view argv = putStrLn $ usage View
+
+view [] = error errTooFew
+
+view (x:[]) | isHelp x            = putStrLn usageView
+            | and (map isDigit x) = doView x ""
+            | otherwise           = error $ "view: invalid id: " ++ x
+
+view (x:xs) = do
+    if and (map isDigit x)
+        then case tryGetViewer xs of
+             Left msg -> error $ "view: " ++ msg
+             Right v  -> doView x v 
+        else error $ "view: invalid id: " ++ x
+
+
+doView :: String -> String -> IO ()
+doView id viewer = putStrLn "not yet implemented"
+
+tryGetViewer :: [String] -> Either String String
+tryGetViewer xs = Right ""
+
+errTooFew :: String
+errTooFew = "view: too few arguments ('" ++ progName ++ " view help' for help)"
+
+usageView :: String
+usageView = "usage: " ++ progName ++ " view <id> [options]\n\
+            \options:\n\
+            \    -v <viewer>"
