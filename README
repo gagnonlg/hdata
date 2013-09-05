@@ -24,11 +24,17 @@ to install, run:
 alternatively, control the install location with the 'PREFIX' and 'DESTDIR'
 environment variables (or simply edit the Makefile).
 
+Also, configure Config.hs as you wish *before* the build
+
 === Using ===
 
 After building and installing,
 
-$ hddb help
+    $ hddb help
+
+also,
+
+    $ man hddb
 
 === Development ===
 
