@@ -2,6 +2,7 @@
 * find a name for the final program
 * Fix the database location problem
     --> use 'getEnv' and put the database in the home folder
+* decide on versioning scheme
 
 ==> testing:
 * unit testing with quickcheck
