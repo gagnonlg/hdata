@@ -1,6 +1,3 @@
-==> search.hs:
-* currently prints a newline on discarded entries, fix this.
-
 ==> View.hs:
 * viewer is hardwired in program; change that 
     --> config file?

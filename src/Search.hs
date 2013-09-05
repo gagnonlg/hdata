@@ -55,7 +55,7 @@ search xs = do
             let ps = getValues "Pages"    multi 
             entries <- searchEntries single 
             let entries' = filtA as $ filtK ks $ filtP ps entries
-            putStr $ concat $ intersperse "\n" $ map rowToString entries'
+            putStr $ concat $ intersperse "\n" $ filter (/="") $ map rowToString entries'
 
 usageSearch :: String
 usageSearch = "usage: " ++ progName ++ " search <filters>\n\
