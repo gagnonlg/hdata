@@ -143,7 +143,7 @@ rowToString :: [String] -> String
 rowToString row = concat $ map conv zipped
     where zipped = zip ["Id:         ","Path:       ","Title:      ","Authors:    ",
                         "Keywords:   ","Journal:    ","Volume:     ",
-                        "Pages:      ","Year:       ","Bookmarked: "] row 
+                        "Year:       ","Pages:      ","Bookmarked: "] row 
           conv (key,val) | null val  = ""
                          | otherwise = key ++ val ++ "\n"
 
