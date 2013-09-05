@@ -19,9 +19,40 @@
 
 module Bookmark (
     bookmark
+    usageBookmark
 ) where
 
-import Tools.Operation
+import Data.Char (isDigit)
+
+import Tools.Constants
+import Tools.Operation (isHelp)
 
 bookmark :: [String] -> IO ()
-bookmark argv = putStrLn $ usage Bookmark
+bookmark [] = (\_ -> listAllBookmarks)
+                      " bookmark help' for help)"
+bookmark (x:[]) = if isHelp x 
+                      then putStrLn usageBookmark
+                      else if and (map isDigit x) 
+                               then addToBookmarks x
+                               else error $ "bookmark: invalid id: " ++ x
+bookmark (x:x2:[]) = if and (map isDigit x)
+                      then if x2 == "-r"
+                               then removeFromBookmarks x 
+                               else error $ "bookmark: invalid argument: " ++ x2
+                      else error $ "bookmark: invalid id: " ++ x
+bookmark _ = error $ "bookmark: too many arguments ('" ++ progName ++
+                     " bookmark help' for help)"
+
+addToBookmarks :: String -> IO ()
+addToBookmarks id = return ()
+
+listAllBookmarks :: IO ()
+listAllBookmarks = return ()
+
+removeFromBookmarks :: String -> IO ()
+removeFromBookmarks is = return ()
+
+usageBookmark :: String
+usageBookmark = "usage: " ++ progName ++ " bookmark [id [options]]\n\
+                \options:\n\
+                \    -r : remove from bookmarks"
