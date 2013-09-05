@@ -9,3 +9,6 @@
 
 ==> search.hs:
 * currently prints a newline on discarded entries, fix this.
+
+==> Tools.Constants:
+* dbName and tableName are only used in tools.SQL
