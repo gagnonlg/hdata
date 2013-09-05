@@ -18,7 +18,7 @@
 -}
 
 module Bookmark (
-    bookmark
+    bookmark,
     usageBookmark
 ) where
 
