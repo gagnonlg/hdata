@@ -7,6 +7,8 @@ hddb:
 clean:
 	rm -rf src/*.o
 	rm -rf src/*.hi
+	rm -rf *.o
+	rm -rf *.hi
 	rm -rf src/Tools/*.o
 	rm -rf src/Tools/*.hi
 	rm -rf *.db
