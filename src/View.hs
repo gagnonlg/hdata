@@ -18,7 +18,8 @@
 -}
 
 module View (
-    view
+    view,
+    usageView
 ) where
 
 import Data.Char (isDigit)

@@ -30,7 +30,14 @@ import Tools.Operation
 import View
 
 help :: [String] -> IO ()
-help argv = putStrLn $ usageHelp
+help [] = putStrLn $ usageHelp
+help (x:_) = case x of
+    "add"    -> putStrLn usageAdd
+    "modify" -> putStrLn usageModify
+    "remove" -> putStrLn usageRemove
+    "search" -> putStrLn usageSearch
+    "view"   -> putStrLn usageView
+    _        -> error $ "help: invalid argument: " ++ x
 
 usageHelp = "usage: " ++ progName ++ " [operation] [id]\n\
              \operations:\n\

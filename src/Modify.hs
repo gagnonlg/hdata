@@ -18,7 +18,8 @@
 -}
 
 module Modify (
-    modify
+    modify,
+    usageModify
 ) where
 
 import Data.Char (isDigit)
