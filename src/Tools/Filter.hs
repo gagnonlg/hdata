@@ -21,6 +21,7 @@ module Tools.Filter (
     filtA,
     filtK,
     filtP,
+    getPath,
     getValues,
     rowToString,
     separateMulti,
@@ -126,6 +127,14 @@ getFilterPairs strs = worker [] strs
           worker fs (x:xs) | not (isFilter x)  = Left $ "Invalid argument: " ++ x 
                            | otherwise         = worker ((x, values):fs) rest
                            where (values,rest) = break isLikeFilter xs
+
+getPath :: [String] -> IO (Either String String)
+getPath row = do
+    case row !! 1 of 
+        "" -> return $ Left "no path for this entry"
+        f  -> doesFileExist f >>= \p -> if p 
+                                       then return $ Right f
+                                       else return $ Left $ "no file at path: " ++ f
 
 getValues :: String -> ([String],[String]) -> String
 getValues _ ([],[]) = []

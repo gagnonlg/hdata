@@ -22,16 +22,19 @@ module View (
 ) where
 
 import Data.Char (isDigit)
+import System.Process (runProcess)
 
 import Tools.Constants
 import Tools.Operation (isHelp)
+import Tools.Filter (getPath)
+import Tools.SQL (getEntry)
 
 view :: [String] -> IO ()
 
 view [] = error errTooFew
 
 view (x:[]) | isHelp x            = putStrLn usageView
-            | and (map isDigit x) = doView x ""
+            | and (map isDigit x) = doView x "zathura"
             | otherwise           = error $ "view: invalid id: " ++ x
 
 view (x:xs) = do
@@ -43,7 +46,20 @@ view (x:xs) = do
 
 
 doView :: String -> String -> IO ()
-doView id viewer = putStrLn "not yet implemented"
+doView id viewer = do
+    entry <- getEntry $ read id
+    case entry of
+        Left msg -> error $ "view: " ++ msg
+        Right row -> do
+            path <- getPath row
+            case path of
+                Left msg -> error $ "view: " ++ msg
+                Right path' -> viewDoc path' viewer
+
+viewDoc :: String -> String -> IO ()
+viewDoc path viewer = do 
+    runProcess viewer [path] Nothing Nothing Nothing Nothing Nothing
+    return ()
 
 tryGetViewer :: [String] -> Either String String
 tryGetViewer (f:[])   | f == "-v" = Left $ "too few arguments ('" ++ progName ++ 
