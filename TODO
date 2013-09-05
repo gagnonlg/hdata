@@ -13,3 +13,7 @@
 
 ==> Tools.Constants:
 * dbName and tableName are only used in tools.SQL
+
+==> View.hs:
+* viewer is hardwired in program; change that 
+    --> config file?
