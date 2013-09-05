@@ -26,4 +26,4 @@ import Database.HDBC
 import Database.HDBC.Sqlite3
 
 progName = "hddb"
-progVersion = "0.1"
+progVersion = "1.0.0"
