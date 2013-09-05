@@ -23,7 +23,6 @@ import System.Environment
 
 import Add
 import Bookmark
-import Citation
 import Modify
 import Remove
 import Search
@@ -38,7 +37,6 @@ usageHelp = "usage: " ++ progName ++ " [operation] [id]\n\
              \operations:\n\
              \    add                  <filters>     \n\
              \    bookmark [options]             [id]\n\    
-             \    citation [options]             [id]\n\    
              \    help     [operation]               \n\    
              \    modify   [options]   <filters> <id>\n\    
              \    remove   [options]             <id>\n\    
@@ -65,7 +63,6 @@ main = do
         case parseArg (head argv) of
             Right Add      -> add argv'
             Right Bookmark -> bookmark argv'
-            Right Citation -> citation argv'
             Right Help     -> help argv'
             Right Modify   -> modify argv'
             Right Remove   -> remove argv'

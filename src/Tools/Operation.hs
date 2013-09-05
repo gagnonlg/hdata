@@ -30,7 +30,6 @@ import System.Environment
 
 data Operation = Add
                | Bookmark
-               | Citation
                | Help
                | Modify
                | Remove
@@ -46,7 +45,6 @@ parseArg :: String -> Either String Operation
 parseArg op = case op of  
     "add"      -> Right Add
     "bookmark" -> Right Bookmark
-    "citation" -> Right Citation
     "help"     -> Right Help
     "-h"       -> Right Help
     "--help"   -> Right Help
