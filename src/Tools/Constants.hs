@@ -25,5 +25,5 @@ module Tools.Constants (
 import Database.HDBC
 import Database.HDBC.Sqlite3
 
-progName = "hdata"
-progVersion = "0.0"
+progName = "hddb"
+progVersion = "0.1"

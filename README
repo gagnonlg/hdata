@@ -1,13 +1,17 @@
-hdata is an sqlite3-powered academic paper database interface, 
-written in Haskell.
+hddb: the simple Haskell Document Database 
+
+a simple sqlite-powered document tracker for the command-line
 
 === Installation ===
 
-you will need to install the following dependencies:
- 
-GHC:          http://www.haskell.org/ghc/        
-Sqlite3:      http://www.sqlite.org
-HDBC-Sqlite3: http://hackage.haskell.org/package/HDBC-sqlite3
+you will need to install the following BUILD dependencies:
+
+    * GHC:          http://www.haskell.org/ghc/        
+    * HDBC-Sqlite3: http://hackage.haskell.org/package/HDBC-sqlite3
+
+you will need to install the following RUN-TIME dependencies:
+
+    * Sqlite3:      http://www.sqlite.org
 
 to build, simply run:
 
@@ -24,13 +28,13 @@ environment variables (or simply edit the Makefile).
 
 After building and installing,
 
-$ hdata help
+$ hddb help
 
 === Development ===
 
 Grab the latest source and report bugs at:
 
-    https://www.github.com/gagnonlg/hdata
+    https://www.github.com/gagnonlg/hddb
 
 Get in touch with the author at:
 
