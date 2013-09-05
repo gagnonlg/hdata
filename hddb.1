@@ -1,0 +1,115 @@
+.TH HDDB 1 hddb\-0.1
+.SH NAME
+hddb \- the simple Haskell Document Database
+.SH SYNOPSIS
+.B hddb 
+.RB <operation>\ [options]
+.SH DESCRIPTION
+hddb is a simple sqlite-powered document tracker written in Haskell, with a 
+command-line interface.
+.P
+It allows the user to track documents in a database along with metadata:
+full absolute path, title, authors, keywords, journal, volume, 
+year of publication, and pages.
+.P
+The database can be queried using any piece of metadata, or by specifying
+the document's unique numeric id. 
+.SH OPERATIONS
+.TP
+.B add
+add a document to the database
+.TP
+.B remove
+remove a document from the database
+.TP
+.B modify
+modify a database entry
+.TP
+.B search
+search entries in the database
+.TP
+.B view
+see a tracked document in a viewer
+.TP
+.B help
+prints a help message
+.TP
+.B version
+prints the version 
+.SH USAGE
+.SS add <filters>
+.TP
+.B -f <file>
+specify the document path.
+.TP
+.B -t <title>
+specify the document title.
+.TP
+.B -a <author1> [<author2> ...]
+specify the authors list.
+.TP
+.B -k <keyword1> [<keyword2> ...]
+specify the keywords list.
+.TP
+.B -j <journal>
+specify the journal.
+.TP
+.B -y <year>
+specify the year of publication. The format is YYYY.
+.TP
+.B -p <page> [page]
+specify the page, or range of pages.
+.SS remove <id>
+.B WARNING: no undo!
+.SS modify <id> <filters>
+.B WARNING: no undo!
+.TP
+.B -f <file>
+specify the new document path.
+.TP
+.B -t <title>
+specify the new document title.
+.TP
+.B -a +<author to add> <author to remove> ...
+specify changes to the authors list.
+.TP
+.B -k +<keyword to add> <keyword to remove> ...
+specify changes to the keywords list.
+.TP
+.B -j <journal>
+specify the new journal.
+.TP
+.B -y <year>
+specify the new year of publication. The format is YYYY.
+.TP
+.B -p <page> [page]
+specify the new page, or range of pages.
+.SS search [id]
+.B search without arguments prints the full content of the database. When given an id, it prints the content of the corresponding entry.
+.SS search <filters>
+.B prints the matching entries.
+.TP
+.B -f <file>
+specify the document path.
+.TP
+.B -t <title>
+specify the document title.
+.TP
+.B -a <author1> [<author2> ...]
+specify the authors list.
+.TP
+.B -k <keyword1> [<keyword2> ...]
+specify the keywords list.
+.TP
+.B -j <journal>
+specify the journal.
+.TP
+.B -y <year>
+specify the year of publication. The format is YYYY.
+.TP
+.B -p <page> [page]
+specify the page, or range of pages.
+.SS view <id> [-v <viewer>]
+.B if used without <-v>, launches default viewer.
+.SH BUGS
+Please report any bugs at https://github.com/gagnonlg/hddb
