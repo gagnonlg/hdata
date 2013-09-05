@@ -1,18 +1,8 @@
 ==> general design:
 * find a name for the final program
-* Fix the database location problem
-    --> use 'getEnv' and put the database in the home folder
-* decide on versioning scheme
-
-==> testing:
-* unit testing with quickcheck
-* write tests scripts for stuff we can't unit test
 
 ==> search.hs:
 * currently prints a newline on discarded entries, fix this.
-
-==> Tools.Constants:
-* dbName and tableName are only used in tools.SQL
 
 ==> View.hs:
 * viewer is hardwired in program; change that 
