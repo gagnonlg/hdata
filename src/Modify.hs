@@ -24,9 +24,9 @@ module Modify (
 import Data.Char (isDigit)
 
 import Tools.Constants
-import Tools.Filter (tryGetFilters)
+import Tools.Filter (tryGetFilters,updatePairs)
 import Tools.Operation (isHelp)
-import Tools.SQL (getEntry)
+import Tools.SQL (getEntry,modifyEntry)
 
 modify :: [String] -> IO ()
 modify []      = error errTooFew
@@ -39,9 +39,10 @@ modify (id:fs) = if or (map (not . isDigit) id)
                                  Right row -> do filters <- tryGetFilters fs 
                                                  case filters of
                                                     Left msg -> error $ "modify: " ++ msg
-                                                    --Right fs' -> doModify row fs'
-                                                    Right fs' -> putStrLn "not yet implemented"
-
+                                                    Right fs' -> doModify row fs'
+                                                    
+doModify :: [String] -> ([String],[String]) -> IO ()
+doModify row new = return (updatePairs row new) >>= modifyEntry (read (row!!0))
 
 errTooFew :: String 
 errTooFew = "modify: too few arguments ('" ++ progName ++ " modify help' for help)"

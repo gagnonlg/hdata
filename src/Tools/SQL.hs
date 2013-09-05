@@ -21,6 +21,7 @@ module Tools.SQL (
     addEntry,
     getAllEntries,
     getEntry,
+    modifyEntry,
     removeEntry,
     searchEntries
 ) where
@@ -39,6 +40,12 @@ buildSQLAdd (ks,vs) =
     "INSERT INTO " ++ tableName ++ " (" ++ keys ++ ") VALUES(" ++ vals ++ ");"
     where keys = concat $ intersperse "," ks
           vals = "'" ++ (concat (intersperse "','" vs)) ++ "'"
+
+buildSQLModify :: String -> ([String],[String]) -> String
+buildSQLModify id ps = "UPDATE " ++ tableName ++ " SET " ++ values ps ++
+                       " WHERE id='" ++ id ++ "';"
+    where values ((k:[]),(v:[])) = k ++ "='" ++ v ++ "'"
+          values ((k:ks),(v:vs)) = k ++ "='" ++ v ++ "'," ++ values (ks,vs)
 
 buildSQLSearch :: ([String],[String]) -> String
 buildSQLSearch ps = "SELECT * FROM " ++ tableName ++ " WHERE " ++ values ps
@@ -96,6 +103,9 @@ getAllEntries = do
 fromSqlToString :: SqlValue -> String
 fromSqlToString SqlNull = ""
 fromSqlToString value = fromSql value
+
+modifyEntry :: Int -> ([String],[String]) -> IO ()
+modifyEntry id pairs = return (buildSQLModify (show id) pairs) >>= runSQL
 
 retrieveAllRows :: IO [[SqlValue]]
 retrieveAllRows = getFromDB $ "SELECT * FROM " ++ tableName 

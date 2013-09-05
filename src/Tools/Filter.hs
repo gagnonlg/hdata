@@ -25,11 +25,12 @@ module Tools.Filter (
     rowToString,
     separateMulti,
     tryGetFilters,
+    updatePairs,
     usageFilters
 ) where
 
 import Data.Char (isDigit)
-import Data.List (intersect,intersperse)
+import Data.List (intersect,intersperse,(\\))
 import System.Directory (doesFileExist)
 
 data Filter = File       String
@@ -154,6 +155,14 @@ separateMulti ps = worker [] [] [] [] ps
                             worker k1 v1 (k:k2) (v:v2) (ks,vs)
               | otherwise = worker (k:k1) (v:v1) k2 v2 (ks,vs)
 
+separateMulti2 :: ([String],[String]) -> (([String],[String]),([String],[String]))
+separateMulti2 ps = worker [] [] [] [] ps
+    where worker k1 v1 k2 v2 ([],[]) = ((k1,v1),(k2,v2))
+          worker k1 v1 k2 v2 ((k:ks),(v:vs)) 
+              | k `elem` ["Authors","Keywords"] = 
+                            worker k1 v1 (k:k2) (v:v2) (ks,vs)
+              | otherwise = worker (k:k1) (v:v1) k2 v2 (ks,vs)
+
 multiToList :: String -> [String]
 multiToList [] = []
 multiToList xs = let (v,rest) = break (=='|') xs
@@ -212,3 +221,24 @@ usageFilters = "filters:\n\
                \    -j <journal>\n\
                \    -y <year> : <yyyy>\n\
                \    -p <page> [page]"
+
+updatePairs :: [String] -> ([String],[String]) -> ([String],[String])
+updatePairs row new = ("Authors":"Keywords":k,na':nk':v)
+    where ((k,v),ak) = separateMulti2 new
+          (aa,ar)   = separateAddRem $ getValues "Authors" ak 
+          (ka,kr)   = separateAddRem $ getValues "Keywords" ak
+          na        = aa ++ (newVals (multiToList (row!!3)) ar aa)
+          nk        = ka ++ (newVals (multiToList (row!!4)) kr ka)  
+          na'       = concat $ intersperse "|" na
+          nk'       = concat $ intersperse "|" nk
+
+
+newVals :: [String] -> [String] -> [String] -> [String]
+newVals old rm add = (old \\ rm) \\ add
+
+separateAddRem :: String -> ([String],[String])
+separateAddRem str = worker [] [] $ multiToList str
+    where worker add rm [] = (add,rm)
+          worker add rm (x:xs) = if head x == '+'
+                                     then worker ((tail x):add) rm xs
+                                     else worker add (x:rm) xs 
