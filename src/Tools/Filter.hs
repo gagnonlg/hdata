@@ -32,7 +32,7 @@ module Tools.Filter (
 
 import Data.Char (isDigit)
 import Data.List (intersect,intersperse,(\\))
-import System.Directory (doesFileExist)
+import System.Directory (doesFileExist, getCurrentDirectory)
 
 data Filter = File       String
             | Title      String
@@ -52,8 +52,14 @@ tryGetFilters argv = case getFilters argv of
                        else  do
         s <- checkFile pairs
         case s of 
-            Right _  -> return $ Right $ pairFilters pairs
+            Right  p -> do let pairs' = replacePath p pairs
+                           return $ Right $ pairFilters pairs'
             Left msg -> return $ Left msg 
+
+replacePath :: String -> [Filter] -> [Filter]
+replacePath _ [] = []
+replacePath p (x:xs) | isPathFilter x = (File p):(replacePath p xs)
+                     | otherwise      = x:(replacePath p xs)
 
 areFiltersEqual :: Filter -> Filter -> Bool
 areFiltersEqual f1 f2 = f1' == f2' 
@@ -66,12 +72,13 @@ anyDuplicates (f:fs) = if or $ map (areFiltersEqual f) fs
                              then True
                              else do anyDuplicates fs
 
-checkFile :: [Filter] -> IO (Either String ()) 
+checkFile :: [Filter] -> IO (Either String String) 
 checkFile fs = case filter isPathFilter fs of
-    []     -> return $ Right ()
+    []     -> return $ Right ""
     ((File p):_)  -> do exists <- doesFileExist p
                         if exists 
-                            then do return $ Right ()
+                            then do cd <- getCurrentDirectory
+                                    return $ Right $ cd ++ "/" ++ p
                             else do return $ Left $ "File does not exists: " ++ p   
 
 isFilter :: String -> Bool
